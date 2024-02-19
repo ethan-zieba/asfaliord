@@ -13,8 +13,8 @@ class Client:
         }
 
     def authenticate(self):
-        self.authentication = requests.post(self.url, data={"username": self.username, "password": self.password}, proxies=self.proxies)
-        print(self.authentication.status_code)
+        self.authentication = requests.post(f"{self.url}/login", data={"username": self.username, "password": self.password}, proxies=self.proxies)
+        print(f"Authentication status: {self.authentication.status_code}")
 
     def get_messages(self):
         self.response = requests.get(self.url, proxies=self.proxies)
