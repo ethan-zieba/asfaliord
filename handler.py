@@ -22,7 +22,7 @@ class Handler(BaseHTTPRequestHandler):
             username = post_dict.get('username', '')
             password = post_dict.get('password', '')
 
-            if username in credentials.usernames and password == credentials[username]:
+            if username in credentials.users and password == credentials.users[username]:
                 print(f"POST request:\nHEADERS: {self.headers}\nDATA: {post_data.decode('utf-8')}")
                 session_id = str(uuid.uuid4())
                 self.sessions[session_id] = username
