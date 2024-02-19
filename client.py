@@ -20,8 +20,8 @@ class Client:
         self.response = requests.get(self.url, proxies=self.proxies)
         print(self.response.status_code)
 
-    def send_message(self):
-        self.message = requests.post()
+    def send_message(self, message):
+        self.message = requests.post(self.url, data={"message":message}, proxies=self.proxies)
 
 
 if __name__ == "__main__":
@@ -29,3 +29,4 @@ if __name__ == "__main__":
     client = Client(credentials.username, credentials.password, credentials.tor_address)
     client.get_messages()
     client.authenticate()
+    client.send_message("Ceci est un message test")
