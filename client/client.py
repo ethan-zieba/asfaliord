@@ -11,12 +11,17 @@ class Client:
         'http': 'socks5h://localhost:9050',
         'https': 'socks5h://localhost:9050'
         }
+        self.cookies = None
 
     def authenticate(self):
-        self.authentication = requests.post(f"{self.url}/login", data={"username": self.username, "password": self.password}, proxies=self.proxies)
+        data = {"username": self.username, "password": self.password}
+        self.authentication = requests.post(f"{self.url}/login", data=data, proxies=self.proxies)
         print(f"Authentication status: {self.authentication.status_code}")
+        self.cookies = self.authentication.cookies
+        print(f"STORED COOKIES: {self.cookies}")
 
     def get_messages(self):
+        print(f"ASKING FOR MESSAGES\nSENDING COOKIES: {self.cookies}\nUSING PROXIES: {self.proxies}")
         self.response = requests.get(self.url, proxies=self.proxies)
         print(self.response.status_code)
 
@@ -27,6 +32,6 @@ class Client:
 if __name__ == "__main__":
     import credentials
     client = Client(credentials.username, credentials.password, credentials.tor_address)
-    client.get_messages()
     client.authenticate()
+    client.get_messages()
     client.send_message("Ceci est un message test")
