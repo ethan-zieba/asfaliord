@@ -11,23 +11,32 @@ class Client:
         'http': 'socks5h://localhost:9050',
         'https': 'socks5h://localhost:9050'
         }
-        self.cookies = None
+        self.cookie = None
 
     def authenticate(self):
         data = {"username": self.username, "password": self.password}
-        self.authentication = requests.post(f"{self.url}/login", data=data, proxies=self.proxies)
-        print(f"Authentication status: {self.authentication.status_code}")
-        self.cookies = self.authentication.cookies
-        print(f"STORED COOKIES: {self.cookies}")
+        response = self.session.post(f"{self.url}/login", data=data, proxies=self.proxies)
+        print(f"Authentication status: {response.status_code}")
+        if response.status_code == 200:
+            self.cookies = response.cookies.get('session_id')
+            print(f"STORED COOKIES: {self.cookie}")
 
     def get_messages(self):
-        print(f"ASKING FOR MESSAGES\nSENDING COOKIES: {self.cookies}\nUSING PROXIES: {self.proxies}")
-        self.response = requests.get(self.url, proxies=self.proxies)
-        print(self.response.status_code)
+        if hasattr(self, 'cookie'):
+            headers = {'Cookie': f'session_id={self.cookie}'}
+            print(f"ASKING FOR MESSAGES\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}")
+            response = self.session.get(f"{self.url}/messages", headers=headers, proxies=self.proxies)
+            print(response.status_code)
+        else:
+            print("AUTHENTICATION ERROR: No auth cookie")
 
     def send_message(self, message):
-        self.message = requests.post(self.url, data={"message":message}, proxies=self.proxies)
-
+        if hasattr(self, 'cookie'):
+            headers = {'Cookie': f'session_id={self.cookie}'}
+            print(f"SENDING MESSAGE\nHEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}")
+            response = self.session.post(f"{self.url}/send_message", data={"message":message}, headers=headers, proxies=self.proxies)
+        else:
+            print("AUTHENTICATION ERROR: No auth cookie")
 
 if __name__ == "__main__":
     import credentials
