@@ -5,7 +5,6 @@ from handler import Handler
 class Server(HTTPServer):
     def __init__(self, ip, port):
         super().__init__((ip, port), Handler)
-
         self.serve_forever()
 
 

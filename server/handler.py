@@ -5,18 +5,19 @@ import credentials
 
 
 class Handler(BaseHTTPRequestHandler):
-    def __init__(self, *args, **kwargs):
-        self.active_sessions = {}
-        super().__init__(*args, **kwargs)
-        
+
+    active_sessions = {}
+
     def do_GET(self):
         if self.path == '/messages':
             if 'Cookie' in self.headers:
                 cookie = cookies.SimpleCookie(self.headers['Cookie'])
                 if 'session_id' in cookie:
                     session_id = cookie['session_id'].value
-                    if session_id in self.active_sessions:
-                        print(f"{self.active_sessions[session_id]} has requested all of the messages")
+                    print(f"-------------\n\nGET REQUEST FROM SESSION_ID: {session_id}")
+                    print(f"ACTIVE SESSIONS: {self.__class__.active_sessions}")
+                    if session_id in self.__class__.active_sessions:
+                        print(f"{self.__class__.active_sessions[session_id]} has requested all of the messages")
                         self.send_response(200)
                         self.send_header('Content-type', 'text/plain')
                         self.end_headers()
@@ -40,20 +41,33 @@ class Handler(BaseHTTPRequestHandler):
             password = post_dict.get('password', '')
 
             if username in credentials.users and password == credentials.users[username]:
-                print(f"POST request:\nHEADERS: {self.headers}DATA: {post_data}")
+                print(f"-------------\n\nPOST request:\nHEADERS: {self.headers}DATA: {post_data}")
                 print(f"POST DATA DICT: {post_dict}")
 
-                # Create unique session id and stores it into a cookie
-                session_id = str(uuid.uuid4())
+                # This block checks if the user already has an id
+                # Note for myself: improve this code readability by putting this in another method
+                has_a_cookie = False
+                existing_session_id = 0
+                for s_id in self.__class__.active_sessions:
+                    if self.__class__.active_sessions[s_id] == username:
+                        has_a_cookie = True
+                        existing_session_id = s_id
                 auth_cookie = cookies.SimpleCookie()
-                auth_cookie['session_id'] = session_id
 
-                # Stores the session id into the active_sessions dict
-                self.active_sessions[session_id] = username
-                print(f"SESSION ID: {str(session_id)}")
+                if not has_a_cookie:
+                    # Create unique session id and stores it into a cookie
+                    session_id = str(uuid.uuid4())
+                    auth_cookie['session_id'] = session_id
+
+                    # Stores the session id into the active_sessions dict
+                    self.__class__.active_sessions[session_id] = username
+                    print(f"ACTIVE SESSIONS: {self.__class__.active_sessions}")
+                    print(f"SESSION ID: {str(session_id)}")
+                else:
+                    auth_cookie['session_id'] = existing_session_id
 
                 self.send_response(200)
-                self.send_header('Content-type', 'application/json')
+                self.send_header('Set-Cookie', auth_cookie.output(header='', sep=''))
                 self.end_headers()
                 print(f"AUTH_COOKIE: {str(auth_cookie)}")
             else:
