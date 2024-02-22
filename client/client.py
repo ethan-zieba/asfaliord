@@ -34,9 +34,11 @@ class Client:
 
     def send_message(self, message):
         if hasattr(self, 'cookie'):
+            data = {"message": message}
             headers = {'Cookie': f'session_id={self.cookie}'}
             print(f"SENDING MESSAGE\nHEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}")
-            response = self.session.post(f"{self.url}/send_message", data={"message":message}, headers=headers, proxies=self.proxies)
+            response = self.session.post(f"{self.url}/send_message", json=data, headers=headers, proxies=self.proxies)
+            print(response.status_code)
         else:
             print("AUTHENTICATION ERROR: No auth cookie")
 
@@ -47,3 +49,4 @@ if __name__ == "__main__":
     client.authenticate()
     print("\n\n\n")
     client.get_messages()
+    client.send_message("Hello world!")

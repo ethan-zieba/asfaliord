@@ -1,3 +1,4 @@
+import json
 import uuid
 from http.server import BaseHTTPRequestHandler
 from http import cookies
@@ -17,6 +18,7 @@ class Handler(BaseHTTPRequestHandler):
                     print(f"-------------\n\nGET REQUEST FROM SESSION_ID: {session_id}")
                     print(f"ACTIVE SESSIONS: {self.__class__.active_sessions}")
                     if session_id in self.__class__.active_sessions:
+                        # Encapsulate this in a different method, perhaps a different class even ?
                         print(f"{self.__class__.active_sessions[session_id]} has requested all of the messages")
                         self.send_response(200)
                         self.send_header('Content-type', 'text/plain')
@@ -74,8 +76,27 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_response(401)
                 self.end_headers()
                 self.wfile.write('Authentication failed'.encode('utf-8'))
-        else:
+        elif self.path == "/send-message ":
             # Here we have to check if cookie exists, if not, return 404, else return what the POST wants
+            if 'Cookie' in self.headers:
+                cookie = cookies.SimpleCookie(self.headers['Cookie'])
+                if 'session_id' in cookie:
+                    session_id = cookie['session_id'].value
+                    print(f"-------------\n\nPOST REQUEST FROM SESSION_ID: {session_id}")
+                    print(f"ACTIVE SESSIONS: {self.__class__.active_sessions}")
+                    if session_id in self.__class__.active_sessions:
+                        print(f"{self.__class__.active_sessions[session_id]} has sent a message")
+                        content_length = int(self.headers['Content-Length'])
+                        post_data = self.rfile.read(content_length).decode('utf-8')
+                        message_data = json.loads(post_data)
+                        message = message_data.get('message', '')
+                        print(f"RECEIVED MESSAGE: {message}")
+                        self.send_response(200)
+                        self.end_headers()
+            self.send_response(401)
+            self.end_headers()
+            self.wfile.write('AUTHENTICATION ERROR'.encode('utf-8'))
+        else:
             self.send_response(404)
             self.end_headers()
             self.wfile.write('Not found'.encode('utf-8'))
