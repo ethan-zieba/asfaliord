@@ -3,8 +3,8 @@ Voice/text group chat, discord inspired, software made at La Plateforme (IT Scho
 
 Uses onion-like routing and gpg encryption, as well as graphical opsec techniques.
 
----
 **Python dependencies:** 
+---
 
 Server and client-side: 
 `mysql, datetime, requests, http.server, random, hashlib`
