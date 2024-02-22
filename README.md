@@ -12,8 +12,10 @@ Server-side only:
 
 Client-side only:
 `requests`
----
+
 **Setup for the server:**
+---
+---
 
 1. You will need tor, and tor-browser installed
 2. Edit the torrc file to uncomment/add these two lines:  
