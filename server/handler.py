@@ -10,7 +10,9 @@ class Handler(BaseHTTPRequestHandler):
     active_sessions = {}
 
     def do_GET(self):
-        if self.path == '/messages':
+        # Add spamming prevention
+
+        if self.path == '/get-messages': # Here make it so that each client has its own page with its username/session_id
             if 'Cookie' in self.headers:
                 cookie = cookies.SimpleCookie(self.headers['Cookie'])
                 if 'session_id' in cookie:
@@ -34,6 +36,8 @@ class Handler(BaseHTTPRequestHandler):
             self.wfile.write(f"ERROR: \'{self.path}\' path not found".encode('utf-8'))
 
     def do_POST(self):
+        # Add spamming prevention
+
         content_length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(content_length).decode('utf-8')
         post_dict = dict(data.split('=') for data in post_data.split('&'))
