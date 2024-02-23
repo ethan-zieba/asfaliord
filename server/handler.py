@@ -60,6 +60,7 @@ class Handler(BaseHTTPRequestHandler):
                         existing_session_id = s_id
                 auth_cookie = cookies.SimpleCookie()
 
+                # Here do the opposite: if client has a cookie already, erase it and create a new one
                 if not has_a_cookie:
                     # Create unique session id and stores it into a cookie
                     session_id = str(uuid.uuid4())
