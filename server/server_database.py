@@ -26,6 +26,11 @@ class ServerDatabase:
         self.cursor.execute(query, (user_id,))
         return self.cursor.fetchone()
 
+    def get_user_id(self, username):
+        query = "SELECT id FROM users WHERE username = %s"
+        self.cursor.execute(query, (username, ))
+        return self.cursor.fetchone()[0]
+
     def update_user(self, user_id, column, new_value):
         data = (column, new_value, user_id)
         query = "UPDATE users SET username = %s WHERE id = %s"
@@ -48,6 +53,11 @@ class ServerDatabase:
         query = "SELECT * FROM channels WHERE id = %s"
         self.cursor.execute(query, (channel_id,))
         return self.cursor.fetchone()
+
+    def read_all_channels(self, permissions_level):
+        query = "SELECT * FROM channels WHERE perm_lvl <= %s"
+        self.cursor.execute(query, (permissions_level,))
+        return self.cursor.fetchall()
 
     def update_channel(self, channel_id, column, new_value):
         data = (column, new_value, channel_id)

@@ -3,11 +3,13 @@ import pandas
 import json
 
 
-class ServerEngine:
+class ServerEngine(server_database.ServerDatabase):
     def __init__(self):
-        self.database = server_database.ServerDatabase()
+        super().__init__()
 
-    def request_messages(self):
+    def request_messages(self, username):
+        permissions_level = self.read_user(self.get_user_id(username))[5]
+        channels_accessible = self.read_all_channels(permissions_level)
         messages_number = self.database.count_messages()
         messages_list = []
         if messages_number > 100:
