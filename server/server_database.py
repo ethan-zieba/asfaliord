@@ -83,9 +83,11 @@ class ServerDatabase:
         self.cursor.execute(query, (message_id,))
         return self.cursor.fetchone()
 
-    def read_all_messages(self):
+    # SELECT * FROM messages INNER JOIN channels ON messages.channel_id = channels.channel_id WHERE channels.perm_lvl <= {permissions_level}
+    def read_all_messages(self, permissions_level):
         # Returns a list of tuples
-        query = "SELECT * FROM messages"
+        query = ("SELECT messages.* FROM messages INNER JOIN channels ON messages.channel_id = channels.channel_id "
+                 "WHERE channels.perm_lvl <= {permissions_level}")
         self.cursor.execute(query)
         return self.cursor.fetchall()
 
