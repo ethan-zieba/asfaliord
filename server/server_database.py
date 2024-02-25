@@ -83,11 +83,10 @@ class ServerDatabase:
         self.cursor.execute(query, (message_id,))
         return self.cursor.fetchone()
 
-    # SELECT * FROM messages INNER JOIN channels ON messages.channel_id = channels.channel_id WHERE channels.perm_lvl <= {permissions_level}
     def read_all_messages(self, permissions_level):
         # Returns a list of tuples
-        query = ("SELECT messages.* FROM messages INNER JOIN channels ON messages.channel_id = channels.channel_id "
-                 "WHERE channels.perm_lvl <= {permissions_level}")
+        query = (f"SELECT messages.* FROM messages INNER JOIN channels ON messages.channel_id = channels.channel_id "
+                 f"WHERE channels.perm_lvl <= {permissions_level}")
         self.cursor.execute(query)
         return self.cursor.fetchall()
 
@@ -116,6 +115,7 @@ class ServerDatabase:
             query = (f"UPDATE messages SET content = %s WHERE id = %s")
             self.cursor.execute(query, data)
             self.cnx.commit()
+
     def close_connection(self):
         self.cursor.close()
         self.cnx.close()
