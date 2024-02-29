@@ -10,7 +10,7 @@ Server and client-side:
 `mysql, datetime, requests, http.server, random, hashlib`
 
 Server-side only:
-`mysql, datetime, uuid, http, json`
+`mysql, datetime, uuid, http (installed by default), json`
 
 Client-side only:
 `requests`
