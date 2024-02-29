@@ -23,7 +23,7 @@ class Client:
             print(f"STORED COOKIES: {self.cookie}")
 
     def get_messages(self):
-        if hasattr(self, 'cookie'):
+        if self.cookie != None:
             headers = {'Cookie': f'session_id={self.cookie}'}
             print(f"ASKING FOR MESSAGES\nWITH HEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}")
             response = self.session.get(f"{self.url}/messages", headers=headers, proxies=self.proxies)
@@ -33,7 +33,7 @@ class Client:
             print("AUTHENTICATION ERROR: No auth cookie")
 
     def send_message(self, message):
-        if hasattr(self, 'cookie'):
+        if self.cookie != None:
             data = {"message": message}
             headers = {'Cookie': f'session_id={self.cookie}'}
             print(f"SENDING MESSAGE\nHEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}")
