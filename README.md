@@ -36,5 +36,7 @@ Client-side only:
 If you encounter any problems checking out /var/lib/syslog might help
 
 **For the server-side database:**
-1. Run the python script create_tables.py, in the server/databases/ folder
-2. Check if it worked by opening mariadb and using SHOW TABLES; and/or SHOW COLUMNS FROM messages; (for example)
+1. Connect to your mariadb, use CREATE DATABASE asfaliord;
+2. Put your credentials in the create_tables.py in the host and password fields (we put ours in a separate credentials.py file, for testing purposes only)
+3. Run the python script create_tables.py, in the server/databases/ folder
+4. Check if it worked by opening mariadb and using SHOW TABLES; and/or SHOW COLUMNS FROM messages; (for example)
