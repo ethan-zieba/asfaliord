@@ -47,5 +47,4 @@ if __name__ == "__main__":
     client = Client(credentials.tor_address)
     client.authenticate(credentials.username, credentials.password)
     print("\n\n\n")
-    client.get_messages()
     client.send_message("Hello world!")

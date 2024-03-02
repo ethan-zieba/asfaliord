@@ -1,5 +1,7 @@
 import tkinter as tk
 from PIL import Image, ImageTk
+import client
+import credentials
 
 
 class LoginScreen:
@@ -69,5 +71,5 @@ class LoginScreen:
 if __name__ == "__main__":
     root = tk.Tk()
     root.minsize(360, (400))
-    login_screen = LoginScreen(root)
+    login_screen = LoginScreen(root, client.Client(credentials.tor_address))
     root.mainloop()
