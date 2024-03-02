@@ -33,3 +33,8 @@ users_query = ("CREATE TABLE `channels` ("
                "`public_gpg` VARCHAR(500),"
                "PRIMARY KEY (`id`)"
                ")")
+
+cursor.execute(messages_query)
+cursor.execute(channel_query)
+cursor.execute(users_query)
+cnx.commit()
