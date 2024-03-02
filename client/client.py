@@ -44,8 +44,8 @@ class Client:
 
 if __name__ == "__main__":
     import credentials
-    client = Client(credentials.username, credentials.password, credentials.tor_address)
-    client.authenticate()
+    client = Client(credentials.tor_address)
+    client.authenticate(credentials.username, credentials.password)
     print("\n\n\n")
     client.get_messages()
     client.send_message("Hello world!")
