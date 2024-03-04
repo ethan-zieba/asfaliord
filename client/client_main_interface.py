@@ -1,6 +1,10 @@
+import random
 import tkinter as tk
 from PIL import Image, ImageTk
 from tkinter import ttk
+import json
+import threading
+import queue
 
 
 class MainInterfaceScreen(tk.Frame):
@@ -67,19 +71,43 @@ class MainInterfaceScreen(tk.Frame):
         self.grid_columnconfigure(1, weight=3)
         self.grid_columnconfigure(2, weight=1)
 
+        self.dict_messages = str({"1": []})
+        self.queue = queue.Queue()
+        self.after(3000 + random.randint(1000, 4000), self.get_messages_coroutine)
+        self.display_messages_coroutine()
+
     def on_user_select(self, event):
         index = self.user_list.curselection()
         if index:
             selected_user = self.user_list.get(index)
             self.input_field.insert(tk.END, selected_user)
 
+    def display_messages(self, messages_dict):
+        self.chat_history.delete("1.0", tk.END)
+        for message in messages_dict["1"]:
+            print(message)
+        self.chat_history.config(state="disabled")
+        self.chat_history.config(state="normal")
+
+            self.after(500, self.display_messages_coroutine)
     def send_message(self):
         message_to_send = self.input_field.get()
         self.input_field.delete(0, tk.END)
         self.client.send_message(message_to_send)
 
-    def display_messages(self, messages_list):
-        for message in messages_list:
+    def get_messages_coroutine(self):
+        threading.Thread(target=self.messages_background_call)
+        print("Getting messages...")
+        self.after(3000 + random.randint(4000, 8000), self.get_messages_coroutine)
+
+    def messages_background_call(self):
+        print("Background call...")
+        dict_messages = self.client.get_messages()
+        self.queue.put(dict_messages)
+
+    def display_messages_coroutine(self):
+        if not self.queue.empty():
+            self.display_messages(json.loads(self.queue.get().replace("'", '"')))
             date, author, text = message.split(" - ")
             self.chat_history.config(state="normal")
             self.chat_history.insert(tk.END, date, "date")
