@@ -1,4 +1,3 @@
-import json
 import uuid
 from http.server import BaseHTTPRequestHandler
 from http import cookies
@@ -64,7 +63,7 @@ class Handler(BaseHTTPRequestHandler):
             if self.valid_auth_cookie():
                 username = self.__class__.active_sessions[self.headers['Cookie'].split("=")[1]]
                 message = post_dict.get('message')
-                print(f'RECEIVED MESSAGE: {message} FROM: {username}')
+                print(f'RECEIVED MESSAGE RAW: {message} FROM: {username}')
                 self.send_response(200)
                 self.end_headers()
                 self.server_engine.save_message(username, message)
