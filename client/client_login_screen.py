@@ -75,8 +75,8 @@ class LoginScreen(tk.Frame):
         password = self.entry_password.get()
         print("Starting main interface")
         try:
-            response_code = self.client.authenticate(username, password)
-            if response_code == 200:
+            response = self.client.authenticate(username, password)
+            if response:
                 self.main_interface_callback()
             else:
                 self.error_label = tk.Label(text=f"AUTHENTICATION ERROR: COULD NOT AUTHENTICATE", foreground="#ff0000",
