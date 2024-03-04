@@ -57,7 +57,7 @@ class Handler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write('Authentication failed'.encode('utf-8'))
 
-        elif self.path == '/send-message ':
+        elif self.path == '/send-message':
             # Here we have to check if cookie exists, if not, return 404, else return what the POST wants
             if self.valid_auth_cookie():
                 content_length = int(self.headers['Content-Length'])

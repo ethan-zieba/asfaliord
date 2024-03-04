@@ -3,13 +3,15 @@ from datetime import datetime
 from hashlib import sha1
 from random import randint
 
+import credentials
+
 
 class ServerDatabase:
     def __init__(self):
         self.cnx = mysql.connector.connect(
             host="localhost",
-            user="your_username",
-            password="your_password",
+            user=credentials.mariadb_user,
+            password=credentials.mariadb_password,
             database="asfaliord"
             )
         self.cursor = self.cnx.cursor()
