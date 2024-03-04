@@ -27,7 +27,7 @@ class Client:
             print(f"ASKING FOR MESSAGES\nWITH HEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}")
             response = self.session.get(f"{self.url}/messages", headers=headers, proxies=self.proxies)
             print(response.status_code)
-            #print(response.json())
+            return response.json()
         else:
             print("AUTHENTICATION ERROR: No auth cookie")
 
