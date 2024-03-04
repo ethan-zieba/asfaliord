@@ -1,7 +1,6 @@
 import tkinter as tk
-
 import requests.exceptions
-import urllib3.exceptions
+import json
 from PIL import Image, ImageTk
 from client import Client
 import credentials
@@ -40,10 +39,17 @@ class LoginScreen(tk.Frame):
         self.entry_username = tk.Entry(self, foreground='#04FF00', bg='#000F44')
         self.entry_password = tk.Entry(self, show="*", foreground='#04FF00', bg='#000F44')
 
+        remembered_credentials = json.load(open("remember_credentials.json"))
+
+
         self.remember_user = tk.IntVar()
         self.checkbox_remember = tk.Checkbutton(self, text="Remember me", background="#292929", foreground='#04FF00',
                                                 activebackground="#292929", highlightbackground="#292929", variable=self.remember_user,
                                                 selectcolor="#000F44")
+        if "username" in remembered_credentials:
+            self.entry_username.insert(0, remembered_credentials["username"])
+            self.entry_password.insert(0, remembered_credentials["password"])
+            self.remember_user.set(1)
         self.server_label = tk.Label(self, text=f"Connected to server: \n{credentials.tor_address[7:17]}[...]{credentials.tor_address[-16:-6]}",
                                      foreground='#04FF00', background="#292929", font=("Classic Console Neue", 12))
 
@@ -73,6 +79,12 @@ class LoginScreen(tk.Frame):
     def login(self):
         username = self.entry_username.get()
         password = self.entry_password.get()
+        if self.remember_user.get() > 0:
+            credentials_dict = {"username": username, "password": password}
+        else:
+            credentials_dict = {}
+        with open("remember_credentials.json", "w") as credentials_file:
+            json.dump(credentials_dict, credentials_file)
         print("Starting main interface")
         try:
             response = self.client.authenticate(username, password)
@@ -81,7 +93,7 @@ class LoginScreen(tk.Frame):
             else:
                 self.error_label = tk.Label(text=f"AUTHENTICATION ERROR: COULD NOT AUTHENTICATE", foreground="#ff0000",
                                         background="#292929", font=("Classic Console Neue", 11))
-            self.error_label.grid(row=6, column=0, rowspan=2, columnspan=2, sticky=tk.NS)
+                self.error_label.grid(row=6, column=0, rowspan=2, columnspan=2, sticky=tk.NS)
         except requests.exceptions.ConnectionError:
             print("Connection refused")
             self.error_label = tk.Label(text=f"CONNECTION ERROR: COULD NOT FIND SERVER", foreground="#ff0000",

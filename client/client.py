@@ -35,7 +35,7 @@ class Client:
         if self.cookie != None:
             data = {"message": message}
             headers = {'Cookie': f'session_id={self.cookie}'}
-            print(f"SENDING MESSAGE\nHEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}")
+            print(f"SENDING MESSAGE\nHEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}\nDATA: {data}")
             response = self.session.post(f"{self.url}/send-message", data=data, headers=headers, proxies=self.proxies)
             print(response.status_code)
         else:
