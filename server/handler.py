@@ -60,10 +60,7 @@ class Handler(BaseHTTPRequestHandler):
         elif self.path == '/send-message':
             # Here we have to check if cookie exists, if not, return 404, else return what the POST wants
             if self.valid_auth_cookie():
-                content_length = int(self.headers['Content-Length'])
-                post_data = self.rfile.read(content_length).decode('utf-8')
-                message_data = json.loads(post_data)
-                message = message_data.get('message', '')
+                message = post_dict.get('message')
                 print(f'RECEIVED MESSAGE: {message}')
                 self.send_response(200)
                 self.end_headers()
