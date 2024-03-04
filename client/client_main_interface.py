@@ -1,3 +1,4 @@
+import os
 import datetime
 import random
 import tkinter as tk
@@ -35,7 +36,7 @@ class MainInterfaceScreen(tk.Frame):
         self.grid(row=0, column=0, sticky=tk.NSEW)
 
         # Logo in the top left corner
-        logo_path = "assets/images/logo/asfaliord_logo.png"
+        logo_path = f"{os.getcwd()}/client/assets/images/logo/asfaliord_logo.png"
         logo_image = Image.open(logo_path)
         logo_size = (150, int((logo_image.size[1] / logo_image.size[0]) * 150))
         self.logo = ImageTk.PhotoImage(logo_image.resize(logo_size))

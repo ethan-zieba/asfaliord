@@ -1,4 +1,7 @@
 from client import Client
+import os
+import sys
+sys.path.insert(1, f'{os.getcwd()}/..')
 import credentials
 import tkinter as tk
 from client_login_screen import LoginScreen
@@ -12,11 +15,11 @@ class App(tk.Tk):
         self.geometry("365x438")
         self.configure(bg="#292929")
         self.title("Asfaliord")
-        self.iconbitmap("assets/images/logo/asfaliord_logo.ico")
+        # self.iconbitmap(f"{os.getcwd()}/client/assets/images/logo/asfaliord_logo.ico")
         self.client = Client(credentials.tor_address)
-        self.login_screen = LoginScreen(self, self.go_to_create_account, self.go_to_main_interface, self.client)
         self.cr_account_screen = CreateAccountScreen(self, self.go_to_login)
         self.main_interface = MainInterfaceScreen(self, self.client)
+        self.login_screen = LoginScreen(self, self.go_to_create_account, self.go_to_main_interface, self.client)
         self.current_screen = self.login_screen
         self.show_screen(self.current_screen)
         self.grid_rowconfigure(0, weight=1)
