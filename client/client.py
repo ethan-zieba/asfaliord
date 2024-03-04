@@ -13,6 +13,7 @@ class Client:
 
     def authenticate(self, username, password):
         data = {"username": username, "password": password}
+        self.username = username
         print(f"ASKING FOR AUTH_COOKIE, DATA: {data}")
         response = self.session.post(f"{self.url}/login", data=data, proxies=self.proxies)
         print(f"Authentication status: {response.status_code}")
@@ -20,19 +21,21 @@ class Client:
             self.cookie = response.cookies.get('session_id')
             print(f"STORED COOKIES: {self.cookie}")
             return True
+        return False
 
     def get_messages(self):
-        if self.cookie != None:
+        if self.cookie is not None:
             headers = {'Cookie': f'session_id={self.cookie}'}
             print(f"ASKING FOR MESSAGES\nWITH HEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}")
-            response = self.session.get(f"{self.url}/messages", headers=headers, proxies=self.proxies)
+            response = self.session.get(f"{self.url}/get-messages", headers=headers, proxies=self.proxies)
             print(response.status_code)
-            return response.json()
+            print(response.json().replace("'", '"'))
+            return response.json().replace("'", '"')
         else:
             print("AUTHENTICATION ERROR: No auth cookie")
 
     def send_message(self, message):
-        if self.cookie != None:
+        if self.cookie is not None:
             data = {"message": message}
             headers = {'Cookie': f'session_id={self.cookie}'}
             print(f"SENDING MESSAGE\nHEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}\nDATA: {data}")
@@ -44,7 +47,9 @@ class Client:
 
 if __name__ == "__main__":
     import credentials
+    import json
     client = Client(credentials.tor_address)
     client.authenticate(credentials.username, credentials.password)
     print("\n\n\n")
-    client.send_message("Hello world!")
+    messages = client.get_messages()
+    print(json.loads(messages), type(json.loads(messages)))

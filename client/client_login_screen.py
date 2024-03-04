@@ -1,3 +1,4 @@
+import threading
 import tkinter as tk
 import requests.exceptions
 import json
@@ -75,6 +76,9 @@ class LoginScreen(tk.Frame):
             self.grid_rowconfigure(i, weight=2)
         for i in range(2):
             self.grid_columnconfigure(i, weight=2)
+
+    def login_background(self):
+        self.login()
 
     def login(self):
         username = self.entry_username.get()

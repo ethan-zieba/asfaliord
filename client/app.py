@@ -19,6 +19,8 @@ class App(tk.Tk):
         self.main_interface = MainInterfaceScreen(self, self.client)
         self.current_screen = self.login_screen
         self.show_screen(self.current_screen)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
 
     def go_to_login(self):
         self.geometry("365x438")
@@ -32,6 +34,7 @@ class App(tk.Tk):
     def go_to_main_interface(self):
         self.geometry("1375x610")
         print(self.client.cookie)
+        self.main_interface.start_messages_coroutine()
         self.show_screen(self.main_interface)
 
     def show_screen(self, screen):
