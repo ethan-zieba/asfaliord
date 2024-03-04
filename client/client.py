@@ -2,9 +2,7 @@ import requests
 
 
 class Client:
-    def __init__(self, username, password, url):
-        self.username = username
-        self.password = password
+    def __init__(self, url):
         self.url = url
         self.session = requests.session()
         self.proxies = {
@@ -13,14 +11,15 @@ class Client:
         }
         self.cookie = None
 
-    def authenticate(self):
-        data = {"username": self.username, "password": self.password}
+    def authenticate(self, username, password):
+        data = {"username": username, "password": password}
         print(f"ASKING FOR AUTH_COOKIE, DATA: {data}")
         response = self.session.post(f"{self.url}/login", data=data, proxies=self.proxies)
         print(f"Authentication status: {response.status_code}")
         if response.status_code == 200:
             self.cookie = response.cookies.get('session_id')
             print(f"STORED COOKIES: {self.cookie}")
+            return True
 
     def get_messages(self):
         if self.cookie != None:
@@ -45,8 +44,7 @@ class Client:
 
 if __name__ == "__main__":
     import credentials
-    client = Client(credentials.username, credentials.password, credentials.tor_address)
-    client.authenticate()
+    client = Client(credentials.tor_address)
+    client.authenticate(credentials.username, credentials.password)
     print("\n\n\n")
-    client.get_messages()
     client.send_message("Hello world!")

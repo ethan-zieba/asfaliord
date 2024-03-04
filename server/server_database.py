@@ -71,9 +71,9 @@ class ServerDatabase:
         self.cnx.commit()
 
     # Messages CRUD operations
-    def create_message(self, user_id, channel_id, content):
-        data = (user_id, channel_id, content, datetime.now().strftime("%Y/%M/%D %H:%M:%S"))
-        query = "INSERT INTO messages (user_id, channel_id, content, time) VALUES (%s, %s, %s, %s)"
+    def create_message(self, user_id, channel_id, content, ttl):
+        data = (user_id, channel_id, content, ttl)
+        query = "INSERT INTO messages (user_id, channel_id, content, time_to_live) VALUES (%s, %s, %s, %s)"
         self.cursor.execute(query, data)
         self.cnx.commit()
 
