@@ -3,24 +3,36 @@ import credentials
 import tkinter as tk
 from client_login_screen import LoginScreen
 from client_create_account_screen import CreateAccountScreen
+from client_main_interface import MainInterfaceScreen
 
 
 class App(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
+        self.geometry("365x438")
+        self.configure(bg="#292929")
         self.title("Asfaliord")
         self.iconbitmap("assets/images/logo/asfaliord_logo.ico")
-        self.login_screen = LoginScreen(self, self.go_to_create_account)
+        self.client = Client(credentials.tor_address)
+        self.login_screen = LoginScreen(self, self.go_to_create_account, self.go_to_main_interface, self.client)
         self.cr_account_screen = CreateAccountScreen(self, self.go_to_login)
-
+        self.main_interface = MainInterfaceScreen(self, self.client)
         self.current_screen = self.login_screen
         self.show_screen(self.current_screen)
 
     def go_to_login(self):
+        self.geometry("365x438")
+        print(self.client.cookie)
         self.show_screen(self.login_screen)
 
     def go_to_create_account(self):
+        self.geometry("410x410")
         self.show_screen(self.cr_account_screen)
+
+    def go_to_main_interface(self):
+        self.geometry("1375x610")
+        print(self.client.cookie)
+        self.show_screen(self.main_interface)
 
     def show_screen(self, screen):
         if self.current_screen:

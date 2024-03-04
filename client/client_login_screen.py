@@ -1,16 +1,20 @@
 import tkinter as tk
+
+import requests.exceptions
+import urllib3.exceptions
 from PIL import Image, ImageTk
 from client import Client
 import credentials
 
 
 class LoginScreen(tk.Frame):
-    def __init__(self, master, screen_callback, client=Client(credentials.tor_address)):
+    def __init__(self, master, screen_callback, main_interface_callback, client=Client(credentials.tor_address)):
         tk.Frame.__init__(self, master)
         self.client = client
         self.master = master
         self.master.minsize(330, 350)
         self.create_account = screen_callback
+        self.main_interface_callback = main_interface_callback
 
         custom_font = ('Classic Console Neue', 16)
         self.configure(bg="#292929")
@@ -29,9 +33,6 @@ class LoginScreen(tk.Frame):
         self.label_logo = tk.Label(self, image=self.logo, background="#292929")
         self.label_logo.image = self.logo
         self.label_logo.grid(row=0, column=0, columnspan=2, sticky=tk.NSEW, padx=10, pady=10)
-
-        custom_font = ('Classic Console Neue', 16)
-        self.option_add("*Font", custom_font)
 
         self.label_username = tk.Label(self, text="Username", foreground='#04FF00', background="#292929")
         self.label_password = tk.Label(self, text="Password", foreground='#04FF00', background="#292929")
@@ -72,7 +73,20 @@ class LoginScreen(tk.Frame):
     def login(self):
         username = self.entry_username.get()
         password = self.entry_password.get()
-        self.client.authenticate(username, password)
+        print("Starting main interface")
+        try:
+            response_code = self.client.authenticate(username, password)
+            if response_code == 200:
+                self.main_interface_callback()
+            else:
+                self.error_label = tk.Label(text=f"AUTHENTICATION ERROR: COULD NOT AUTHENTICATE", foreground="#ff0000",
+                                        background="#292929", font=("Classic Console Neue", 11))
+            self.error_label.grid(row=6, column=0, rowspan=2, columnspan=2, sticky=tk.NS)
+        except requests.exceptions.ConnectionError:
+            print("Connection refused")
+            self.error_label = tk.Label(text=f"CONNECTION ERROR: COULD NOT FIND SERVER", foreground="#ff0000",
+                                        background="#292929", font=("Classic Console Neue", 11))
+            self.error_label.grid(row=6, column=0, rowspan=2, columnspan=2, sticky=tk.NS)
 
 
 if __name__ == "__main__":
