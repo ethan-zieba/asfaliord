@@ -18,8 +18,10 @@ class Handler(BaseHTTPRequestHandler):
             if self.valid_auth_cookie():
                 # Content is in the form of a dict of lists: each key is the channel id, and its value is a list of
                 # the messages
+                session_id = self.headers['Cookie'].split("=")[1]
+                print(session_id)
                 content = self.server_engine.request_messages(
-                    self.__class__.active_sessions[self.cookie['session-id'].value])
+                    self.__class__.active_sessions[session_id])
                 self.send_response(200)
                 self.send_header('Content-type', 'application/json')
                 self.end_headers()
@@ -60,10 +62,12 @@ class Handler(BaseHTTPRequestHandler):
         elif self.path == '/send-message':
             # Here we have to check if cookie exists, if not, return 404, else return what the POST wants
             if self.valid_auth_cookie():
+                username = self.__class__.active_sessions[self.headers['Cookie'].split("=")[1]]
                 message = post_dict.get('message')
-                print(f'RECEIVED MESSAGE: {message}')
+                print(f'RECEIVED MESSAGE: {message} FROM: {username}')
                 self.send_response(200)
                 self.end_headers()
+                self.server_engine.save_message(username, message)
             else:
                 self.send_response(401)
                 self.end_headers()

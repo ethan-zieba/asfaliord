@@ -8,17 +8,20 @@ import credentials
 
 class ServerDatabase:
     def __init__(self):
+        self.open_connection()
+
+    def open_connection(self):
         self.cnx = mysql.connector.connect(
             host="localhost",
             user=credentials.mariadb_user,
             password=credentials.mariadb_password,
             database="asfaliord"
-            )
+        )
         self.cursor = self.cnx.cursor()
 
     # Simple CRUD operations for each table of the server-side database
     def create_user(self, username, password, gpg_pk, perm_lvl):
-        query = "INSERT INTO users (username, password, gpg_pk, perm_lvl) VALUES (%s, %s, %s, %s)"
+        query = "INSERT INTO users (username, password, public_gpg, perm_lvl) VALUES (%s, %s, %s, %s)"
         data = (username, password, gpg_pk, perm_lvl)
         self.cursor.execute(query, data)
         self.cnx.commit()
@@ -47,7 +50,7 @@ class ServerDatabase:
     # Channels CRUD operations
     def create_channel(self, name, min_perm_lvl, is_text):
         data = (name, min_perm_lvl, is_text)
-        query = "INSERT INTO channels (name, min_perm_lvl, is_text) VALUES (%s, %s)"
+        query = "INSERT INTO channels (name, permissions_lvl) VALUES (%s, %s)"
         self.cursor.execute(query, data)
         self.cnx.commit()
 
@@ -73,9 +76,9 @@ class ServerDatabase:
         self.cnx.commit()
 
     # Messages CRUD operations
-    def create_message(self, user_id, channel_id, content, ttl):
-        data = (user_id, channel_id, content, ttl)
-        query = "INSERT INTO messages (user_id, channel_id, content, time_to_live) VALUES (%s, %s, %s, %s)"
+    def create_message(self, channel_id, content, ttl):
+        data = (content, channel_id, ttl)
+        query = "INSERT INTO messages (content, channel_id, time_to_live) VALUES (%s, %s, %s)"
         self.cursor.execute(query, data)
         self.cnx.commit()
 
@@ -87,7 +90,7 @@ class ServerDatabase:
 
     def read_all_messages(self, permissions_level):
         # Returns a list of tuples
-        query = (f"SELECT messages.* FROM messages INNER JOIN channels ON messages.channel_id = channels.channel_id "
+        query = (f"SELECT messages.* FROM messages INNER JOIN channels ON messages.channel_id = channels.id "
                  f"WHERE channels.perm_lvl <= {permissions_level}")
         self.cursor.execute(query)
         return self.cursor.fetchall()
