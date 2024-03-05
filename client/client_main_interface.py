@@ -36,7 +36,7 @@ class MainInterfaceScreen(tk.Frame):
         self.grid(row=0, column=0, sticky=tk.NSEW)
 
         # Logo in the top left corner
-        logo_path = f"{os.getcwd()}/client/assets/images/logo/asfaliord_logo.png"
+        logo_path = f"{os.getcwd()}/assets/images/logo/asfaliord_logo.png"
         logo_image = Image.open(logo_path)
         logo_size = (150, int((logo_image.size[1] / logo_image.size[0]) * 150))
         self.logo = ImageTk.PhotoImage(logo_image.resize(logo_size))
@@ -121,6 +121,8 @@ class MainInterfaceScreen(tk.Frame):
         self.display_messages(json.loads(dict_messages))
 
     def display_messages(self, messages_dict):
+        # Compare actual chat history with messages asked
+        # If nothing new: stay the same
         self.chat_history.config(state="normal")
         self.chat_history.delete("1.0", tk.END)
         self.chat_history.config(state="disabled")
