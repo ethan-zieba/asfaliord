@@ -7,13 +7,13 @@ Uses onion routing and gpg encryption as well as graphical opsec techniques.
 ---
 
 Server and client-side: 
-`mysql, datetime, requests, http.server, random, hashlib`
+`mysql, datetime, requests, http.server, random, hashlib, json, argon2, plyer`
 
 Server-side only:
-`mysql, datetime, uuid, http (installed by default), json`
+`mysql, datetime, uuid, http (installed by default), json, argon2`
 
 Client-side only:
-`requests`
+`requests, plyer`
 
 **Setup for the server on Debian-based distros:**
 ---
