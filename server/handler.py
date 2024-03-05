@@ -54,7 +54,7 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_header('Content-type', 'text/plain')
                 self.end_headers()
                 self.wfile.write(b'La Plateforme - Server for oral presentation, 3 channels available: Lounge, '
-                                 b'Private Lounge and Extremely Private Lounge (accessible only by admin)')
+                                 b'Private Lounge and Extremely Private')
         else:
             self.send_response(404)
             self.end_headers()
