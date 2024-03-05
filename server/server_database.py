@@ -59,9 +59,6 @@ class ServerDatabase:
         self.cursor.execute(query, (channel_id,))
         return self.cursor.fetchone()
 
-    def get_channel_permissions_level(self, channel_id):
-        return self.read_channel(channel_id)[2]
-
     def read_all_channels(self, permissions_level):
         query = "SELECT * FROM channels WHERE perm_lvl <= %s"
         self.cursor.execute(query, (permissions_level,))

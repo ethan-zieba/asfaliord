@@ -45,11 +45,10 @@ class ServerEngine(server_database.ServerDatabase):
         return json_string
 
     def save_message(self, username, message, channel_id):
-        if self.get_user_permission_level(username) >= self.get_channel_permissions_level(channel_id):
-            self.open_connection()
-            self.create_message(channel_id,
-                                f"{datetime.date.today().strftime('%Y/%m/%d')} - {username} - {message}", "2025-10-10")
-            self.close_connection()
+        self.open_connection()
+        self.create_message(channel_id,
+                            f"{datetime.date.today().strftime('%Y/%m/%d')} - {username} - {message}", "2025-10-10")
+        self.close_connection()
 
     def get_user_permission_level(self, username):
         permissions_level = self.read_user(self.get_user_id(username))[4]
