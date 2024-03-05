@@ -36,6 +36,10 @@ class ServerDatabase:
         self.cursor.execute(query)
         return self.cursor.fetchall()
 
+    def get_user_permission_level(self, username):
+        permissions_level = self.read_user(self.get_user_id(username))[4]
+        return permissions_level
+
     def get_user_id(self, username):
         query = "SELECT id FROM users WHERE username = %s"
         self.cursor.execute(query, (username, ))
