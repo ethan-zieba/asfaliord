@@ -34,7 +34,7 @@ class ServerDatabase:
     def read_all_users(self):
         query = "SELECT * FROM users"
         self.cursor.execute(query)
-        return self.cursor.fetchone()
+        return self.cursor.fetchall()
 
     def get_user_id(self, username):
         query = "SELECT id FROM users WHERE username = %s"
