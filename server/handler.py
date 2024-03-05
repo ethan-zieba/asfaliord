@@ -18,13 +18,29 @@ class Handler(BaseHTTPRequestHandler):
                 # Content is in the form of a dict of lists: each key is the channel id, and its value is a list of
                 # the messages
                 session_id = self.headers['Cookie'].split("=")[1]
+                # Here we get the id of the client that asked for the messages
                 print(session_id)
+                # And find its username in our active sessions for better database manipulation
                 content = self.server_engine.request_messages(
                     self.__class__.active_sessions[session_id])
                 self.send_response(200)
                 self.send_header('Content-type', 'application/json')
                 self.end_headers()
                 self.wfile.write(content.encode('utf-8'))
+            else:
+                self.send_response(401)
+                self.end_headers()
+                self.wfile.write('Unauthorized'.encode('utf-8'))
+        elif self.path == '/get-channels':
+            if self.valid_auth_cookie():
+                # Content is in the form of a dict: each key is the channel id and its value is the channel's name
+                # Here we find the session_id of the user so we can get its username and then the channels he has access to
+                session_id = self.headers['Cookie'].split("=")[1]
+                channels = self.server_engine.request_channels(self.__class__.active_sessions[session_id])
+                self.send_response(200)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(channels.encode('utf-8'))
             else:
                 self.send_response(401)
                 self.end_headers()

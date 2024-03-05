@@ -33,12 +33,14 @@ class MainInterfaceScreen(tk.Frame):
         self.client = client
         self.grid(row=0, column=0, sticky=tk.NSEW)
 
-        # Logo in the top left corner
-        self.left_frame()
+        self.current_channel = 1
+        self.dict_text_channels = {"1": "Lounge"}
+        # Logo and channels in the top left corner
+        self.create_left_frame()
         # Chat in the center
-        self.center_frame()
+        self.create_center_frame()
         # Users list on the right
-        self.right_frame()
+        self.create_right_frame()
 
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=0)
@@ -46,19 +48,41 @@ class MainInterfaceScreen(tk.Frame):
         self.grid_columnconfigure(1, weight=4)
         self.grid_columnconfigure(2, weight=0)
 
-        self.current_channel = 1
+        self.create_text_channels_buttons()
         self.dict_messages = {"1": ["Now - SYSTEM - Fetching all messages..."]}
         self.display_messages(self.dict_messages)
 
-    def left_frame(self):
+    def create_left_frame(self):
+        self.left_frame = tk.Frame(self, bg="#292929")
+        self.left_frame.grid(row=0, column=0, sticky="nsew", pady=10)
         logo_path = "assets/images/logo/asfaliord_logo.png"
         logo_image = Image.open(logo_path)
-        logo_size = (150, int((logo_image.size[1] / logo_image.size[0]) * 150))
+        logo_size = (145, int((logo_image.size[1] / logo_image.size[0]) * 145))
         self.logo = ImageTk.PhotoImage(logo_image.resize(logo_size))
-        self.logo_label = tk.Label(self, image=self.logo, background="#292929")
+        self.logo_label = tk.Label(self.left_frame, image=self.logo, background="#292929")
         self.logo_label.grid(row=0, column=0, padx=10)
+        self.text_channel_label = tk.Label(self.left_frame, text=f"Opened text channel:\n{self.dict_text_channels['1']}", background="#000F44", foreground="#04FF00", font=("Classic Console Neue", 10))
+        self.text_channel_label.grid(row=1, column=0, padx=10, pady=20, sticky="ew")
 
-    def center_frame(self):
+    def get_text_channels(self):
+        self.dict_text_channels = json.loads(self.client.get_channels())
+
+    def create_text_channels_buttons(self):
+        # self.dict_channels is a dictionary with the keys being the channel id and the values being the channel name
+        for channel in self.dict_text_channels:
+            # Creates a button for each channel for which we have the permission (server-side permission check)
+            tk.Button(self.left_frame, text=self.dict_text_channels[channel], command=lambda channel_id=channel: self.switch_text_channel(channel_id),
+                                     background='#2937FF',
+                                     foreground='#04FF00', activebackground='#4DC9FF', activeforeground='#04FF00').grid(
+                row=int(channel)+1, column=0, sticky="ew", padx=10, pady=5
+            )
+
+    def switch_text_channel(self, channel_id):
+        self.current_channel = channel_id
+        self.text_channel_label.configure(text=f"Opened text channel:\n{self.dict_text_channels[self.current_channel]}", font=("Classic Console Neue", 10))
+        self.display_messages(self.dict_messages)
+
+    def create_center_frame(self):
         self.middle_frame = tk.Frame(self, bg="#292929")
         self.middle_frame.grid(row=0, column=1, sticky="nsew", pady=10)
         self.middle_frame.grid_rowconfigure(0, weight=2)
@@ -76,7 +100,7 @@ class MainInterfaceScreen(tk.Frame):
                                      foreground='#04FF00', activebackground='#4DC9FF', activeforeground='#04FF00')
         self.send_button.grid(row=1, column=1, pady=30)
 
-    def right_frame(self):
+    def create_right_frame(self):
         self.right_frame = tk.Frame(self, bg="#292929")
         self.right_frame.grid(row=0, column=2, sticky="nsew", padx=10, pady=30)
         self.right_frame.grid_rowconfigure(1, weight=1)
@@ -159,13 +183,6 @@ class MainInterfaceScreen(tk.Frame):
             self.chat_history.tag_configure("date", foreground="#4AE4FF")
             self.chat_history.config(state="disabled")
             self.chat_history.see(tk.END)
-
-    def get_channels(self):
-        pass
-
-    def display_channels(self, channels_list):
-        # Creates a button for each channel, with the channel name and type
-        pass
 
     def get_users(self):
         # Gets a tuple of (username, isConnected)
