@@ -3,6 +3,7 @@ from datetime import datetime
 from hashlib import sha1
 from random import randint
 import os
+import sys
 sys.path.insert(1,f'{os.getcwd()}/../..')
 import credentials
 
