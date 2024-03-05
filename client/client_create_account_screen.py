@@ -13,6 +13,7 @@ class CreateAccountScreen(tk.Frame):
         self.master.minsize(100, 100)
 
         custom_font = ('Classic Console Neue', 16)
+        # Configures frame background
         self.configure(bg="#292929")
         self.option_add("*Font", custom_font)
 
@@ -21,6 +22,7 @@ class CreateAccountScreen(tk.Frame):
         self.grid_placement()
 
     def create_widgets(self):
+        # Using getcwd because Linux did not understand the path as Windows did
         logo_path = rf"{os.getcwd()}/assets/images/logo/asfaliord_logo.png"
         logo_image = Image.open(logo_path)
         logo_size = (150, int((logo_image.size[1] / logo_image.size[0]) * 150))
@@ -35,6 +37,7 @@ class CreateAccountScreen(tk.Frame):
         self.label_username = tk.Label(self, text="Username", foreground='#04FF00', background="#292929")
         self.label_password = tk.Label(self, text="Password", foreground='#04FF00', background="#292929")
         self.label_gpg_key = tk.Label(self, text="GPG Public Key", foreground='#04FF00', background="#292929")
+        # Password error label for password non-conformity
         self.label_password_error = tk.Label(self, text="", foreground='red', background="#292929", justify="left")
 
         self.entry_username = tk.Entry(self, foreground='#04FF00', bg='#000F44')
@@ -65,6 +68,7 @@ class CreateAccountScreen(tk.Frame):
         username = self.entry_username.get()
         password = self.entry_password.get()
         gpg_key = self.entry_gpg_key.get()
+        # Calls client.create_account method, returns True or False
         if self.client.create_account(username, password, gpg_key):
             self.label_success = tk.Label(self, text="Account Creation Successful", foreground='#04FF00', background="#292929")
             self.label_success.grid(row=6, column=0, pady=10)
