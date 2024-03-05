@@ -1,4 +1,3 @@
-import os
 import datetime
 import random
 import tkinter as tk
@@ -8,7 +7,6 @@ from PIL import Image, ImageTk
 from tkinter import ttk
 import json
 import threading
-import queue
 
 import credentials
 from asfaliord.client import client
@@ -48,8 +46,9 @@ class MainInterfaceScreen(tk.Frame):
         self.grid_columnconfigure(1, weight=4)
         self.grid_columnconfigure(2, weight=0)
 
-        self.dict_messages = str({"1": ["Now - SYSTEM - Fetching all messages..."]}).replace("'", '"')
-        self.display_messages(json.loads(self.dict_messages))
+        self.current_channel = 1
+        self.dict_messages = {"1": ["Now - SYSTEM - Fetching all messages..."]}
+        self.display_messages(self.dict_messages)
 
     def left_frame(self):
         logo_path = "assets/images/logo/asfaliord_logo.png"
@@ -97,7 +96,7 @@ class MainInterfaceScreen(tk.Frame):
             selected_user = self.user_list.get(index)
             self.input_field.insert(tk.END, selected_user)
 
-    def get_message_input(self):
+    def get_message_input(self, event):
         message_to_send = self.input_field.get()
         self.input_field.delete(0, tk.END)
         threading.Thread(target=self.send_message_background_call(message_to_send)).start()
@@ -110,13 +109,15 @@ class MainInterfaceScreen(tk.Frame):
     # so we don't have to wait for the get_messages coroutine to see what we sent
     def send_message_local(self, message_sent):
         self.chat_history.config(state="normal")
+        self.dict_messages[str(self.current_channel)].append(
+            f"{datetime.date.today().strftime('%Y/%m/%d')} - {self.client.username}: {message_sent}")
         self.chat_history.insert(tk.END, f"{datetime.date.today().strftime('%Y/%m/%d')}", "date")
         self.chat_history.insert(tk.END, f" - {self.client.username}", "name")
         self.chat_history.insert(tk.END, f": {message_sent}\n")
         self.chat_history.config(state="disabled")
 
     def start_messages_coroutine(self):
-        self.after(3000 + random.randint(4000, 4000), self.get_messages_coroutine)
+        self.after(2000 + random.randint(1000, 3000), self.get_messages_coroutine)
 
     def get_messages_coroutine(self):
         threading.Thread(target=self.messages_background_call).start()
@@ -124,9 +125,14 @@ class MainInterfaceScreen(tk.Frame):
         self.start_messages_coroutine()
 
     def messages_background_call(self):
-        print("Background call...")
-        dict_messages = self.client.get_messages()
-        self.display_messages(json.loads(dict_messages))
+        self.previous_dict_messages = self.dict_messages
+        raw_messages = self.client.get_messages()
+        self.dict_messages = json.loads(raw_messages)
+        if self.dict_messages[str(self.current_channel)] != self.previous_dict_messages[str(self.current_channel)]:
+            print("NEW MESSAGE: REFRESHING TEXT BOX")
+            self.display_messages(self.dict_messages)
+        else:
+            print("NO NEW MESSAGE: NOT REFRESHING TEXT BOX")
 
     def display_messages(self, messages_dict):
         # Compare actual chat history with messages asked
@@ -134,7 +140,7 @@ class MainInterfaceScreen(tk.Frame):
         self.chat_history.config(state="normal")
         self.chat_history.delete("1.0", tk.END)
         self.chat_history.config(state="disabled")
-        for message in messages_dict["1"]:
+        for message in messages_dict[str(self.current_channel)]:
             date, author, text = message.split(" - ")
             text = urllib.parse.unquote_plus(text)
             self.chat_history.config(state="normal")
@@ -146,10 +152,28 @@ class MainInterfaceScreen(tk.Frame):
             self.chat_history.config(state="disabled")
             self.chat_history.see(tk.END)
 
+    def get_channels(self):
+        pass
+
+    def display_channels(self, channels_list):
+        # Creates a button for each channel, with the channel name and type
+        pass
+
+    def get_users(self):
+        # Gets a tuple of (username, isConnected)
+        pass
+
     def display_users(self, users_list):
         self.user_list.delete(0, "end")
         for user in users_list:
             self.user_list.insert(tk.END, user)
+
+    def get_server_name(self):
+        # Gets the server name when connecting to it
+        pass
+
+    def display_server_name(self):
+        pass
 
 if __name__ == "__main__":
     root = tk.Tk()
