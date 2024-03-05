@@ -2,7 +2,7 @@ import datetime
 import random
 import tkinter as tk
 import urllib.parse
-
+from plyer import notification
 from PIL import Image, ImageTk
 from tkinter import ttk
 import json
@@ -71,7 +71,7 @@ class MainInterfaceScreen(tk.Frame):
         self.chat_history['yscrollcommand'] = self.chat_history_scroll.set
         self.input_field = tk.Entry(self.middle_frame, foreground='#04FF00', bg='#000F44')
         self.input_field.grid(row=1, column=0, sticky="ew", pady=10, padx=10)
-        self.send_button = tk.Button(self.middle_frame, text="Send", command=self.get_message_input,
+        self.send_button = tk.Button(self.middle_frame, text="Send", command=lambda event=None: self.get_message_input,
                                      background='#2937FF',
                                      foreground='#04FF00', activebackground='#4DC9FF', activeforeground='#04FF00')
         self.send_button.grid(row=1, column=1, pady=30)
@@ -128,6 +128,14 @@ class MainInterfaceScreen(tk.Frame):
         self.previous_dict_messages = self.dict_messages
         raw_messages = self.client.get_messages()
         self.dict_messages = json.loads(raw_messages)
+        # Checks if app is opened or not
+        if self.master.focus_get() is None:
+            print(self.master.focus_get())
+            # Bug here, notification is sent 4 times
+            # Something to do with the threading ?
+            for channel in self.dict_messages:
+                if self.dict_messages[channel] != self.previous_dict_messages[channel]:
+                    notification.notify(title='New messages', message=f"In channel {channel}", app_icon=None, timeout=10)
         if self.dict_messages[str(self.current_channel)] != self.previous_dict_messages[str(self.current_channel)]:
             print("NEW MESSAGE: REFRESHING TEXT BOX")
             self.display_messages(self.dict_messages)
