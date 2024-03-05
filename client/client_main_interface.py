@@ -179,7 +179,7 @@ class MainInterfaceScreen(tk.Frame):
             # Something to do with the threading ?
             for channel in self.dict_messages:
                 if self.dict_messages[channel] != self.previous_dict_messages[channel]:
-                    notification.notify(title='New messages', message=f"In channel {channel}", app_icon=None, timeout=10)
+                    notification.notify(title='New messages', message=f"In channel {self.dict_text_channels[channel]}", app_icon=None, timeout=10)
         if self.dict_messages[str(self.current_channel)] != self.previous_dict_messages[str(self.current_channel)]:
             print("NEW MESSAGE: REFRESHING TEXT BOX")
             self.display_messages(self.dict_messages)
