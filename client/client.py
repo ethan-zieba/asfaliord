@@ -60,8 +60,8 @@ class Client:
             print(f"ASKING FOR SERVER NAME\nWITH HEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}")
             response = self.session.get(f"{self.url}/get-server-infos", headers=headers, proxies=self.proxies)
             print(response.status_code)
-            print(response.read().decode('utf-8'))
-            return response.read().decode('utf-8')
+            print(response.text)
+            return response.text
         else:
             print("AUTHENTICATION ERROR: No auth cookie")
 
