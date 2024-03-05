@@ -64,10 +64,12 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == '/login':
             username = post_dict.get('username', '')
             password = post_dict.get('password', '')
-
+            # Updates users dict
+            self.users = self.server_engine.get_users()
             if username in self.users and password == self.users[username]:
                 print(f'-------------\n\nPOST request:\nHEADERS: {self.headers}DATA: {post_data}')
                 print(f'POST DATA DICT: {post_dict}')
+                print(f'CURRENT USERS LIST: {self.users}')
                 auth_cookie = self.create_auth_cookie(username)
                 self.send_response(200)
                 self.send_header('Set-Cookie', auth_cookie.output(header='', sep=''))
