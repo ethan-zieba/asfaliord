@@ -12,6 +12,7 @@ class Handler(BaseHTTPRequestHandler):
 
     active_sessions = {}
     server_engine = ServerEngine()
+    users = server_engine.get_users()
 
     def do_GET(self):
         # Add spamming prevention
@@ -54,7 +55,7 @@ class Handler(BaseHTTPRequestHandler):
             self.wfile.write(f'ERROR: \'{self.path}\' path not found'.encode('utf-8'))
 
     def do_POST(self):
-        # Add spamming prevention
+        # Add spamming prevention in the future
 
         content_length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(content_length).decode('utf-8')
@@ -64,7 +65,7 @@ class Handler(BaseHTTPRequestHandler):
             username = post_dict.get('username', '')
             password = post_dict.get('password', '')
 
-            if username in credentials.users and password == credentials.users[username]:
+            if username in self.users and password == self.users[username]:
                 print(f'-------------\n\nPOST request:\nHEADERS: {self.headers}DATA: {post_data}')
                 print(f'POST DATA DICT: {post_dict}')
                 auth_cookie = self.create_auth_cookie(username)

@@ -31,6 +31,11 @@ class ServerDatabase:
         self.cursor.execute(query, (user_id,))
         return self.cursor.fetchone()
 
+    def read_all_users(self):
+        query = "SELECT * FROM users"
+        self.cursor.execute(query)
+        return self.cursor.fetchone()
+
     def get_user_id(self, username):
         query = "SELECT id FROM users WHERE username = %s"
         self.cursor.execute(query, (username, ))
@@ -119,7 +124,7 @@ class ServerDatabase:
         for i in range(messages_count):
             # Creates a sha1 (fastest sha, more time-efficient relative to our needs) that replaces the hashed message
             # content. For basic opsec purposes, making it look like a real message for the human eye.
-            data = (sha1(chr(randint(96, 122)).encode('utf-8')).hexdigest(), i)
+            data = (sha1(chr(randint(1, 122)).encode('utf-8')).hexdigest(), i)
             query = (f"UPDATE messages SET content = %s WHERE id = %s")
             self.cursor.execute(query, data)
             self.cnx.commit()

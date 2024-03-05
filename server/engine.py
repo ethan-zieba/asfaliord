@@ -44,6 +44,18 @@ class ServerEngine(server_database.ServerDatabase):
         self.close_connection()
         return json_string
 
+    def get_users(self):
+        self.open_connection()
+        # users_list is a list of tuples returned by a mysql.cursor.fetchall()
+        users_list = self.read_all_users()
+        data = {}
+        for user in users_list:
+            name = str(user[1])
+            password = str(user[2])
+            data[name] = password
+        self.close_connection()
+        return data
+
     def save_message(self, username, message, channel_id):
         if self.get_user_permission_level(username) >= self.get_channel_permissions_level(channel_id):
             self.open_connection()
