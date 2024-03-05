@@ -86,26 +86,28 @@ class LoginScreen(tk.Frame):
     def login(self):
         username = self.entry_username.get()
         password = self.entry_password.get()
+        # Remember me management
         if self.remember_user.get() > 0:
             credentials_dict = {"username": username, "password": password}
         else:
             credentials_dict = {}
         with open("remember_credentials.json", "w") as credentials_file:
             json.dump(credentials_dict, credentials_file)
-        print("Starting main interface")
         try:
             response = self.client.authenticate(username, password)
             if response:
+                # Starts main_interface if response is True (code 200)
                 self.main_interface_callback()
             else:
                 self.error_label = tk.Label(text=f"AUTHENTICATION ERROR: COULD NOT AUTHENTICATE", foreground="#ff0000",
                                         background="#292929", font=("Classic Console Neue", 11))
                 self.error_label.grid(row=6, column=0, rowspan=2, columnspan=2, sticky=tk.NS)
+                self.after(5000, self.error_label.configure(text=""))
         except requests.exceptions.ConnectionError:
-            print("Connection refused")
             self.error_label = tk.Label(text=f"CONNECTION ERROR: COULD NOT FIND SERVER", foreground="#ff0000",
                                         background="#292929", font=("Classic Console Neue", 11))
             self.error_label.grid(row=6, column=0, rowspan=2, columnspan=2, sticky=tk.NS)
+            self.after(5000, self.error_label.configure(text=""))
 
 
 if __name__ == "__main__":
