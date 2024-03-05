@@ -2,9 +2,6 @@ import uuid
 from http.server import BaseHTTPRequestHandler
 from http import cookies
 from argon2 import PasswordHasher
-import os
-import sys
-sys.path.insert(1, f'{os.getcwd()}/..')
 from engine import ServerEngine
 
 
@@ -15,10 +12,10 @@ class Handler(BaseHTTPRequestHandler):
     users = server_engine.get_users()
 
     #SETTINGS RELATED TO PASSWORD HASHING
-    self.PEPPER = "CHANGE_THIS"
-    self.MEMORY_COST = 4000000
-    self.TIME_COST = 1000000
-    self.PARALLELISM = 4
+    PEPPER = "CHANGE_THIS"
+    MEMORY_COST = 4000000
+    TIME_COST = 1000000
+    PARALLELISM = 4
 
 
     def do_GET(self):
@@ -161,12 +158,12 @@ class Handler(BaseHTTPRequestHandler):
                     return True
         return False
 
-        def hash_password(self, password):
-            ph = PasswordHasher(memory_cost = MEMORY_COST, time_cost = TIME_COST, parallelism = PARALLELISM)
-            hashed_password = ph.hash(password, PEPPER)
-            return hashed_password
+    def hash_password(self, password):
+        ph = PasswordHasher(memory_cost = self.MEMORY_COST, time_cost = TIME_COST, parallelism = PARALLELISM)
+        hashed_password = ph.hash(password, self.PEPPER)
+        return hashed_password
         
-        def verify_password(password, hashed_password):
-            ph = PasswordHasher(memory_cost = MEMORY_COST, time_cost = TIME_COST, parallelism = PARALLELISM)
-            check = ph.verify(hashed_password, password)
-            return check
+    def verify_password(password, hashed_password):
+        ph = PasswordHasher(memory_cost = MEMORY_COST, time_cost = TIME_COST, parallelism = PARALLELISM)
+        check = ph.verify(hashed_password, password)
+        return check
