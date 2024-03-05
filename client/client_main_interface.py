@@ -36,14 +36,30 @@ class MainInterfaceScreen(tk.Frame):
         self.grid(row=0, column=0, sticky=tk.NSEW)
 
         # Logo in the top left corner
-        logo_path = f"{os.getcwd()}/assets/images/logo/asfaliord_logo.png"
+        self.left_frame()
+        # Chat in the center
+        self.center_frame()
+        # Users list on the right
+        self.right_frame()
+
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=0)
+        self.grid_columnconfigure(0, weight=0)
+        self.grid_columnconfigure(1, weight=4)
+        self.grid_columnconfigure(2, weight=0)
+
+        self.dict_messages = str({"1": ["Now - SYSTEM - Fetching all messages..."]}).replace("'", '"')
+        self.display_messages(json.loads(self.dict_messages))
+
+    def left_frame(self):
+        logo_path = "assets/images/logo/asfaliord_logo.png"
         logo_image = Image.open(logo_path)
         logo_size = (150, int((logo_image.size[1] / logo_image.size[0]) * 150))
         self.logo = ImageTk.PhotoImage(logo_image.resize(logo_size))
         self.logo_label = tk.Label(self, image=self.logo, background="#292929")
         self.logo_label.grid(row=0, column=0, padx=10)
 
-        # Chat in the center
+    def center_frame(self):
         self.middle_frame = tk.Frame(self, bg="#292929")
         self.middle_frame.grid(row=0, column=1, sticky="nsew", pady=10)
         self.middle_frame.grid_rowconfigure(0, weight=2)
@@ -56,11 +72,12 @@ class MainInterfaceScreen(tk.Frame):
         self.chat_history['yscrollcommand'] = self.chat_history_scroll.set
         self.input_field = tk.Entry(self.middle_frame, foreground='#04FF00', bg='#000F44')
         self.input_field.grid(row=1, column=0, sticky="ew", pady=10, padx=10)
-        self.send_button = tk.Button(self.middle_frame, text="Send", command=self.get_message_input, background='#2937FF',
-                                      foreground='#04FF00', activebackground='#4DC9FF', activeforeground='#04FF00')
+        self.send_button = tk.Button(self.middle_frame, text="Send", command=self.get_message_input,
+                                     background='#2937FF',
+                                     foreground='#04FF00', activebackground='#4DC9FF', activeforeground='#04FF00')
         self.send_button.grid(row=1, column=1, pady=30)
 
-        # Users list on the right
+    def right_frame(self):
         self.right_frame = tk.Frame(self, bg="#292929")
         self.right_frame.grid(row=0, column=2, sticky="nsew", padx=10, pady=30)
         self.right_frame.grid_rowconfigure(1, weight=1)
@@ -73,15 +90,6 @@ class MainInterfaceScreen(tk.Frame):
         self.user_list_scroll = ttk.Scrollbar(self.right_frame, command=self.user_list.yview)
         self.user_list_scroll.grid(row=1, column=1, sticky="ns")
         self.user_list['yscrollcommand'] = self.user_list_scroll.set
-
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_rowconfigure(1, weight=0)
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=4)
-        self.grid_columnconfigure(2, weight=0)
-
-        self.dict_messages = str({"1": ["Now - SYSTEM - Fetching all messages..."]}).replace("'", '"')
-        self.display_messages(json.loads(self.dict_messages))
 
     def on_user_select(self, event):
         index = self.user_list.curselection()
