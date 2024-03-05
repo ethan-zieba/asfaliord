@@ -5,9 +5,10 @@ from PIL import Image, ImageTk
 
 
 class CreateAccountScreen(tk.Frame):
-    def __init__(self, master, screen_callback):
+    def __init__(self, master, screen_callback, client):
         tk.Frame.__init__(self, master)
         self.master = master
+        self.client = client
         self.login_screen = screen_callback
         self.master.minsize(100, 100)
 
@@ -64,6 +65,10 @@ class CreateAccountScreen(tk.Frame):
         username = self.entry_username.get()
         password = self.entry_password.get()
         gpg_key = self.entry_gpg_key.get()
+        if self.client.create_account(username, password, gpg_key):
+            self.label_success = tk.Label(self, text="Account Creation Successful", foreground='#04FF00', background="#292929")
+            self.label_success.grid(row=6, column=0, pady=10)
+            self.master.after(3000, self.login_screen)
 
 
 if __name__ == "__main__":

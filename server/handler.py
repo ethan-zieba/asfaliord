@@ -94,6 +94,15 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_response(401)
                 self.end_headers()
                 self.wfile.write('AUTHENTICATION ERROR'.encode('utf-8'))
+
+        elif self.path == '/create-account':
+            username = post_dict.get('username', '')
+            password = post_dict.get('password', '')
+            gpg = post_dict.get('gpg', '')
+            self.server_engine.create_user_if_not_exists(username, password, gpg)
+            self.send_response(200)
+            self.end_headers()
+
         else:
             self.send_response(404)
             self.end_headers()

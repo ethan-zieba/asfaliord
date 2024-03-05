@@ -18,7 +18,7 @@ class App(tk.Tk):
         # self.iconbitmap(f"{os.getcwd()}/client/assets/images/logo/asfaliord_logo.ico")
         self.client = Client(credentials.tor_address)
         self.main_interface = MainInterfaceScreen(self, self.client)
-        self.cr_account_screen = CreateAccountScreen(self, self.go_to_login)
+        self.cr_account_screen = CreateAccountScreen(self, self.go_to_login, self.client)
         self.login_screen = LoginScreen(self, self.go_to_create_account, self.go_to_main_interface, self.client)
         self.current_screen = self.login_screen
         self.show_screen(self.current_screen)

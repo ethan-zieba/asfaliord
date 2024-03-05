@@ -11,6 +11,17 @@ class Client:
         }
         self.cookie = None
 
+    def create_account(self, username, password, gpg):
+        data = {"username": username, "password": password, "gpg": gpg}
+        print(f"ASKING FOR ACCOUNT CREATION, DATA: {data}")
+        response = self.session.post(f"{self.url}/create-account", data=data, proxies=self.proxies)
+        print(f"Response status: {response.status_code}")
+        if response.status_code == 200:
+            print(f"ACCOUNT SUCCESSFULLY CREATED")
+            return True
+        return False
+
+
     def authenticate(self, username, password):
         data = {"username": username, "password": password}
         self.username = username
