@@ -5,6 +5,7 @@ class Client:
     def __init__(self, url):
         self.url = url
         self.session = requests.session()
+        # Using Tor proxies on client computer
         self.proxies = {
         'http': 'socks5h://localhost:9050',
         'https': 'socks5h://localhost:9050'
@@ -12,10 +13,13 @@ class Client:
         self.cookie = None
 
     def create_account(self, username, password, gpg):
+        # Data to send via request
         data = {"username": username, "password": password, "gpg": gpg}
         print(f"ASKING FOR ACCOUNT CREATION, DATA: {data}")
+        # Sending post request, specifying proxies to use
         response = self.session.post(f"{self.url}/create-account", data=data, proxies=self.proxies)
         print(f"Response status: {response.status_code}")
+        # 200 is a success code
         if response.status_code == 200:
             print(f"ACCOUNT SUCCESSFULLY CREATED")
             return True
@@ -25,9 +29,11 @@ class Client:
         data = {"username": username, "password": password}
         self.username = username
         print(f"ASKING FOR AUTH_COOKIE, DATA: {data}")
+        # Sends a POST request for a cookie, with username and password
         response = self.session.post(f"{self.url}/login", data=data, proxies=self.proxies)
         print(f"Authentication status: {response.status_code}")
         if response.status_code == 200:
+            # Stores the cookie inside the attribute self.cookie
             self.cookie = response.cookies.get('session_id')
             print(f"STORED COOKIES: {self.cookie}")
             return True
@@ -39,6 +45,7 @@ class Client:
             print(f"ASKING FOR MESSAGES\nWITH HEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}")
             response = self.session.get(f"{self.url}/get-messages", headers=headers, proxies=self.proxies)
             print(response.status_code)
+            # Response is in a json format
             return response.json().replace("'", '"')
         else:
             print("AUTHENTICATION ERROR: No auth cookie")
@@ -49,6 +56,7 @@ class Client:
             print(f"ASKING FOR CHANNELS NAMES\nWITH HEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}")
             response = self.session.get(f"{self.url}/get-channels", headers=headers, proxies=self.proxies)
             print(response.status_code)
+            # Response is in a json format
             print(response.json().replace("'", '"'))
             return response.json().replace("'", '"')
         else:
