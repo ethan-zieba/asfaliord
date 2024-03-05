@@ -44,9 +44,9 @@ class ServerEngine(server_database.ServerDatabase):
         self.close_connection()
         return json_string
 
-    def save_message(self, username, message):
+    def save_message(self, username, message, channel_id):
         self.open_connection()
-        self.create_message(1,
+        self.create_message(channel_id,
                             f"{datetime.date.today().strftime('%Y/%m/%d')} - {username} - {message}", "2025-10-10")
         self.close_connection()
 

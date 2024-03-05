@@ -66,6 +66,8 @@ class MainInterfaceScreen(tk.Frame):
 
     def get_text_channels(self):
         self.dict_text_channels = json.loads(self.client.get_channels())
+        for channel in self.dict_text_channels:
+            self.dict_messages[channel] = [f"Now - SYSTEM - Fetching messages of this channel: {self.dict_text_channels[channel]}"]
 
     def create_text_channels_buttons(self):
         # self.dict_channels is a dictionary with the keys being the channel id and the values being the channel name
@@ -127,7 +129,7 @@ class MainInterfaceScreen(tk.Frame):
 
     def send_message_background_call(self, message_to_send):
         self.send_message_local(message_to_send)
-        threading.Thread(target=lambda: self.client.send_message(message_to_send)).start()
+        threading.Thread(target=lambda: self.client.send_message(message_to_send, self.current_channel)).start()
 
     # Updates instantly when we send a message,
     # so we don't have to wait for the get_messages coroutine to see what we sent

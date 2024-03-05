@@ -85,7 +85,8 @@ class Handler(BaseHTTPRequestHandler):
                 print(f'RECEIVED MESSAGE RAW: {message} FROM: {username}')
                 self.send_response(200)
                 self.end_headers()
-                self.server_engine.save_message(username, message)
+                channel_id, message = message.split('C', 1)
+                self.server_engine.save_message(username, message, channel_id)
             else:
                 self.send_response(401)
                 self.end_headers()

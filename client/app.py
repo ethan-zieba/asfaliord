@@ -39,6 +39,7 @@ class App(tk.Tk):
         print(self.client.cookie)
         self.main_interface.start_messages_coroutine()
         self.main_interface.get_text_channels()
+        self.main_interface.create_text_channels_buttons()
         self.show_screen(self.main_interface)
 
     def show_screen(self, screen):

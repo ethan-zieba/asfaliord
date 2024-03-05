@@ -55,8 +55,9 @@ class Client:
         else:
             print("AUTHENTICATION ERROR: No auth cookie")
 
-    def send_message(self, message):
+    def send_message(self, message, channel):
         if self.cookie is not None:
+            message = f"{channel}C{message}"
             data = {"message": message}
             headers = {'Cookie': f'session_id={self.cookie}'}
             print(f"SENDING MESSAGE\nHEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}\nDATA: {data}")
