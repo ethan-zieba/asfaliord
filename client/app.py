@@ -15,6 +15,7 @@ class App(tk.Tk):
         self.geometry("365x438")
         self.configure(bg="#292929")
         self.title("Asfaliord")
+        # Here, ico format is not usable on Linux, so we commented it
         # self.iconbitmap(f"{os.getcwd()}/client/assets/images/logo/asfaliord_logo.ico")
         self.client = Client(credentials.tor_address)
         self.main_interface = MainInterfaceScreen(self, self.client)
@@ -26,17 +27,18 @@ class App(tk.Tk):
         self.grid_columnconfigure(0, weight=1)
 
     def go_to_login(self):
+        # Login callback, calls the login_screen
         self.geometry("365x438")
-        print(self.client.cookie)
         self.show_screen(self.login_screen)
 
     def go_to_create_account(self):
+        # Calls the create_account screen
         self.geometry("410x410")
         self.show_screen(self.cr_account_screen)
 
     def go_to_main_interface(self):
+        # Calls the main_interface screen
         self.geometry("1375x610")
-        print(self.client.cookie)
         self.main_interface.start_messages_coroutine()
         self.main_interface.thread_get_server_infos()
         self.main_interface.create_text_channels_buttons()
@@ -46,6 +48,7 @@ class App(tk.Tk):
         if self.current_screen:
             self.current_screen.grid_forget()
         self.current_screen = screen
+        # Resets the grid position of the current screen
         self.current_screen.grid(row=0, column=0, sticky="nsew")
 
 
