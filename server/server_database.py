@@ -2,7 +2,8 @@ import mysql.connector
 from datetime import datetime
 from hashlib import sha1
 from random import randint
-
+import os
+sys.path.insert(1,f'{os.getcwd()}/../..')
 import credentials
 
 
