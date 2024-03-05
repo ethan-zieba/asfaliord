@@ -1,6 +1,8 @@
 import uuid
 from http.server import BaseHTTPRequestHandler
 from http import cookies
+import sys
+sys.path.insert(1, f'{os.getcwd()}/..')
 import credentials
 from engine import ServerEngine
 
