@@ -13,6 +13,13 @@ class Handler(BaseHTTPRequestHandler):
     server_engine = ServerEngine()
     users = server_engine.get_users()
 
+    #SETTINGS RELATED TO PASSWORD HASHING
+    PEPPER = "CHANGE_THIS"
+    MEMORY_COST = 4000000
+    TIME_COST = 1000000
+    PARALLELISM = 4
+
+
     def do_GET(self):
         # Add spamming prevention
 
@@ -69,7 +76,9 @@ class Handler(BaseHTTPRequestHandler):
 
         if self.path == '/login':
             username = post_dict.get('username', '')
-            password = post_dict.get('password', '')
+            pwd = post_dict.get('password', '')
+            password = hash_password(pwd)
+
             # Updates users dict
             self.users = self.server_engine.get_users()
             if username in self.users and password == self.users[username]:
@@ -103,7 +112,7 @@ class Handler(BaseHTTPRequestHandler):
 
         elif self.path == '/create-account':
             username = post_dict.get('username', '')
-            password = post_dict.get('password', '')
+            password = hash_password(post_dict.get('password', ''))
             gpg = post_dict.get('gpg', '')
             self.server_engine.create_user_if_not_exists(username, password, gpg)
             self.send_response(200)
@@ -150,3 +159,13 @@ class Handler(BaseHTTPRequestHandler):
                 if session_id in self.__class__.active_sessions:
                     return True
         return False
+
+        def hash_password(password):
+            ph = PasswordHasher(memory_cost = MEMORY_COST, time_cost = TIME_COST, parallelism = PARALLELISM)
+            hashed_password = ph.hash(password, PEPPER)
+            return hashed_password
+        
+        def verify_password(password, hashed_password):
+            ph = PasswordHasher(memory_cost = MEMORY_COST, time_cost = TIME_COST, parallelism = PARALLELISM)
+            check = ph.verify(hashed_password, password)
+            return check
