@@ -22,11 +22,11 @@ messages_query = ("CREATE TABLE messages ("
 channel_query = ("CREATE TABLE channels ("
                  "id INT NOT NULL AUTO_INCREMENT, "
                  "name TEXT DEFAULT '', "
-                 "permissions_level INT NOT NULL DEFAULT 1, "
+                 "perm_lvl INT NOT NULL DEFAULT 1, "
                  "PRIMARY KEY (id)"
                  ")")
 
-users_query = ("CREATE TABLE channels ("
+users_query = ("CREATE TABLE users ("
                "id INT NOT NULL AUTO_INCREMENT,"
                "username VARCHAR(25) NOT NULL,"
                "password VARCHAR(255) NOT NULL,"
@@ -37,4 +37,11 @@ users_query = ("CREATE TABLE channels ("
 cursor.execute(messages_query)
 cursor.execute(channel_query)
 cursor.execute(users_query)
+
+first_channel = ("INSERT INTO channels (name, perm_lvl) VALUES ('General', 1)")
+first_message = (f"INSERT INTO messages (content, channel_id, time_to_live) VALUES ('AUTOMATED - SYSTEM - Created channel General', 1, '2055-03-03'")
+
+cursor.execute(first_channel)
+cursor.execute(first_message)
+
 cnx.commit()
