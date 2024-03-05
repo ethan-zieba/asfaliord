@@ -74,12 +74,11 @@ class Handler(BaseHTTPRequestHandler):
 
         if self.path == '/login':
             username = post_dict.get('username', '')
-            pwd = post_dict.get('password', '')
-            password = self.hash_password(pwd)
+            password = post_dict.get('password', '')
 
             # Updates users dict
             self.users = self.server_engine.get_users()
-            if username in self.users and password == self.users[username]:
+            if username in self.users and self.verify_password(password, self.users[username]) == True :
                 print(f'-------------\n\nPOST request:\nHEADERS: {self.headers}DATA: {post_data}')
                 print(f'POST DATA DICT: {post_dict}')
                 print(f'CURRENT USERS LIST: {self.users}')
@@ -160,10 +159,10 @@ class Handler(BaseHTTPRequestHandler):
 
     def hash_password(self, password):
         ph = PasswordHasher(memory_cost = self.MEMORY_COST, time_cost = self.TIME_COST, parallelism = self.PARALLELISM)
-        hashed_password = ph.hash(password, self.PEPPER)
+        hashed_password = ph.hash(password)
         return hashed_password
         
-    def verify_password(password, hashed_password):
+    def verify_password(self, password, hashed_password):
         ph = PasswordHasher(memory_cost = self.MEMORY_COST, time_cost = self.TIME_COST, parallelism = self.PARALLELISM)
         check = ph.verify(hashed_password, password)
         return check
