@@ -159,11 +159,11 @@ class Handler(BaseHTTPRequestHandler):
         return False
 
     def hash_password(self, password):
-        ph = PasswordHasher(memory_cost = self.MEMORY_COST, time_cost = TIME_COST, parallelism = PARALLELISM)
+        ph = PasswordHasher(memory_cost = self.MEMORY_COST, time_cost = self.TIME_COST, parallelism = self.PARALLELISM)
         hashed_password = ph.hash(password, self.PEPPER)
         return hashed_password
         
     def verify_password(password, hashed_password):
-        ph = PasswordHasher(memory_cost = MEMORY_COST, time_cost = TIME_COST, parallelism = PARALLELISM)
+        ph = PasswordHasher(memory_cost = self.MEMORY_COST, time_cost = self.TIME_COST, parallelism = self.PARALLELISM)
         check = ph.verify(hashed_password, password)
         return check
