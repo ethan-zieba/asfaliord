@@ -57,8 +57,8 @@ class ServerEngine(server_database.ServerDatabase):
         return data
 
     def create_user_if_not_exists(self, username, password, gpg):
-        self.open_connection()
         users = self.get_users()
+        self.open_connection()
         if username not in users:
             self.create_user(username, password, gpg, 1)
         else:
