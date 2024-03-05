@@ -99,7 +99,7 @@ class MainInterfaceScreen(tk.Frame):
     def create_center_frame(self):
         self.middle_frame = tk.Frame(self, bg="#292929")
         self.middle_frame.grid(row=0, column=1, sticky="nsew", pady=10)
-        self.middle_frame.grid_rowconfigure(0, weight=2)
+        self.middle_frame.grid_rowconfigure(2, weight=2)
         self.middle_frame.grid_columnconfigure(0, weight=2)
         self.server_name = tk.Label(self.middle_frame, text=f"Connecting", background="#000F44", foreground="#04FF00",
                                     font=("Classic Console Neue", 16))
