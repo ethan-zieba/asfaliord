@@ -9,7 +9,7 @@ class ServerEngine(server_database.ServerDatabase):
 
     def request_messages(self, username):
         self.open_connection()
-        permissions_level = self.read_user(self.get_user_id(username))[4]
+        permissions_level = self.get_user_permission_level(username)
         # messages_list is a list of tuple returned by a mysql.cursor.fetchall(),
         # each tuple containing the columns of the messages table
         messages_list = self.read_all_messages(permissions_level)
@@ -29,8 +29,27 @@ class ServerEngine(server_database.ServerDatabase):
         self.close_connection()
         return json_string
 
-    def save_message(self, username, message):
+    def request_channels(self, username):
         self.open_connection()
-        self.create_message(1,
+        permission_level = self.get_user_permission_level(username)
+        # channels_list is a list of tuple returned by a mysql.cursor.fetchall(),
+        # each tuple containing the columns of the messages table
+        channels_list = self.read_all_channels(permission_level)
+        data = {}
+        for channel in channels_list:
+            name = str(channel[1])
+            id = str(channel[0])
+            data[id] = name
+        json_string = json.dumps(str(data))
+        self.close_connection()
+        return json_string
+
+    def save_message(self, username, message, channel_id):
+        self.open_connection()
+        self.create_message(channel_id,
                             f"{datetime.date.today().strftime('%Y/%m/%d')} - {username} - {message}", "2025-10-10")
         self.close_connection()
+
+    def get_user_permission_level(self, username):
+        permissions_level = self.read_user(self.get_user_id(username))[4]
+        return permissions_level

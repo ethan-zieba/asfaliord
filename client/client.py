@@ -29,13 +29,35 @@ class Client:
             print(f"ASKING FOR MESSAGES\nWITH HEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}")
             response = self.session.get(f"{self.url}/get-messages", headers=headers, proxies=self.proxies)
             print(response.status_code)
+            return response.json().replace("'", '"')
+        else:
+            print("AUTHENTICATION ERROR: No auth cookie")
+
+    def get_channels(self):
+        if self.cookie is not None:
+            headers = {'Cookie': f'session_id={self.cookie}'}
+            print(f"ASKING FOR CHANNELS NAMES\nWITH HEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}")
+            response = self.session.get(f"{self.url}/get-channels", headers=headers, proxies=self.proxies)
+            print(response.status_code)
             print(response.json().replace("'", '"'))
             return response.json().replace("'", '"')
         else:
             print("AUTHENTICATION ERROR: No auth cookie")
 
-    def send_message(self, message):
+    def get_server_infos(self):
         if self.cookie is not None:
+            headers = {'Cookie': f'session_id={self.cookie}'}
+            print(f"ASKING FOR CHANNELS NAMES\nWITH HEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}")
+            response = self.session.get(f"{self.url}/get-server-infos", headers=headers, proxies=self.proxies)
+            print(response.status_code)
+            print(response.json().replace("'", '"'))
+            return response.json().replace("'", '"')
+        else:
+            print("AUTHENTICATION ERROR: No auth cookie")
+
+    def send_message(self, message, channel):
+        if self.cookie is not None:
+            message = f"{channel}C{message}"
             data = {"message": message}
             headers = {'Cookie': f'session_id={self.cookie}'}
             print(f"SENDING MESSAGE\nHEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}\nDATA: {data}")
