@@ -1,6 +1,7 @@
 import uuid
 from http.server import BaseHTTPRequestHandler
 from http import cookies
+import os
 import sys
 sys.path.insert(1, f'{os.getcwd()}/..')
 import credentials
