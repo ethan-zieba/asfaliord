@@ -57,11 +57,13 @@ class ServerEngine(server_database.ServerDatabase):
         return data
 
     def create_user_if_not_exists(self, username, password, gpg):
+        self.open_connection()
         users = self.get_users()
         if username not in users:
             self.create_user(username, password, gpg, 1)
         else:
             print(f"ERROR: COULDN'T CREATE USER: {username} WITH PASSWORD: {password} -- USERNAME ALREADY IN DATABASE")
+        self.close_connection()
 
     def save_message(self, username, message, channel_id):
         if self.get_user_permission_level(username) >= self.get_channel_permissions_level(channel_id):
