@@ -64,6 +64,16 @@ class MainInterfaceScreen(tk.Frame):
         self.text_channel_label = tk.Label(self.left_frame, text=f"Opened text channel:\n{self.dict_text_channels['1']}", background="#000F44", foreground="#04FF00", font=("Classic Console Neue", 10))
         self.text_channel_label.grid(row=1, column=0, padx=10, pady=20, sticky="ew")
 
+    def thread_get_server_infos(self):
+        threading.Thread(target=self.get_text_channels).start()
+        threading.Thread(target=self.get_server_namedesc).start()
+
+    def get_server_namedesc(self):
+        # Gets the server name when connecting to it
+        server_name, server_description = self.client.get_server_namedesc().split("-", 1)
+        self.server_name.configure(text=server_name)
+        self.server_description.configure(text=server_description)
+
     def get_text_channels(self):
         self.dict_text_channels = json.loads(self.client.get_channels())
         for channel in self.dict_text_channels:
@@ -89,18 +99,21 @@ class MainInterfaceScreen(tk.Frame):
         self.middle_frame.grid(row=0, column=1, sticky="nsew", pady=10)
         self.middle_frame.grid_rowconfigure(0, weight=2)
         self.middle_frame.grid_columnconfigure(0, weight=2)
+        self.server_name = tk.Label(self.middle_frame, text=f"Connecting", background="#000F44", foreground="#04FF00", font=("Classic Console Neue", 16))
+        self.server_description = tk.Label(self.middle_frame, text=f"Fetching description", background="#000F44", foreground="#04FF00", font=("Classic Console Neue", 10))
+        self.server_name.grid(row=0, column=0, sticky="nsew")
         self.chat_history = tk.Text(self.middle_frame, state="disabled", wrap="word",
                                     background="#000F44", foreground="#04FF00", font=("Classic Console Neue", 10))
-        self.chat_history.grid(row=0, column=0, sticky="nsew")
+        self.chat_history.grid(row=1, column=0, sticky="nsew")
         self.chat_history_scroll = ttk.Scrollbar(self.middle_frame, command=self.chat_history.yview, orient=tk.VERTICAL)
         self.chat_history_scroll.grid(row=0, column=1, sticky="ns")
         self.chat_history['yscrollcommand'] = self.chat_history_scroll.set
         self.input_field = tk.Entry(self.middle_frame, foreground='#04FF00', bg='#000F44')
-        self.input_field.grid(row=1, column=0, sticky="ew", pady=10, padx=10)
+        self.input_field.grid(row=2, column=0, sticky="ew", pady=10, padx=10)
         self.send_button = tk.Button(self.middle_frame, text="Send", command=lambda event=None: self.get_message_input,
                                      background='#2937FF',
                                      foreground='#04FF00', activebackground='#4DC9FF', activeforeground='#04FF00')
-        self.send_button.grid(row=1, column=1, pady=30)
+        self.send_button.grid(row=2, column=1, pady=30)
 
     def create_right_frame(self):
         self.right_frame = tk.Frame(self, bg="#292929")
@@ -194,10 +207,6 @@ class MainInterfaceScreen(tk.Frame):
         self.user_list.delete(0, "end")
         for user in users_list:
             self.user_list.insert(tk.END, user)
-
-    def get_server_name(self):
-        # Gets the server name when connecting to it
-        pass
 
     def display_server_name(self):
         pass

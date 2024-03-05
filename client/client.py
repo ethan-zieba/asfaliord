@@ -21,7 +21,6 @@ class Client:
             return True
         return False
 
-
     def authenticate(self, username, password):
         data = {"username": username, "password": password}
         self.username = username
@@ -55,14 +54,14 @@ class Client:
         else:
             print("AUTHENTICATION ERROR: No auth cookie")
 
-    def get_server_infos(self):
+    def get_server_namedesc(self):
         if self.cookie is not None:
             headers = {'Cookie': f'session_id={self.cookie}'}
-            print(f"ASKING FOR CHANNELS NAMES\nWITH HEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}")
+            print(f"ASKING FOR SERVER NAME\nWITH HEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}")
             response = self.session.get(f"{self.url}/get-server-infos", headers=headers, proxies=self.proxies)
             print(response.status_code)
-            print(response.json().replace("'", '"'))
-            return response.json().replace("'", '"')
+            print(response.read().decode('utf-8'))
+            return response.read().decode('utf-8')
         else:
             print("AUTHENTICATION ERROR: No auth cookie")
 

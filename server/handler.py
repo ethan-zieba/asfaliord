@@ -4,7 +4,6 @@ from http import cookies
 import os
 import sys
 sys.path.insert(1, f'{os.getcwd()}/..')
-import credentials
 from engine import ServerEngine
 
 
@@ -49,6 +48,13 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_response(401)
                 self.end_headers()
                 self.wfile.write('Unauthorized'.encode('utf-8'))
+        elif self.path == "/get-server-infos":
+            if self.valid_auth_cookie():
+                self.send_response(200)
+                self.send_header('Content-type', 'text/plain')
+                self.end_headers()
+                self.wfile.write(b'La Plateforme - Server for oral presentation, 3 channels available: Lounge, '
+                                 b'Private Lounge and Extremely Private Lounge (accessible only by admin)')
         else:
             self.send_response(404)
             self.end_headers()
