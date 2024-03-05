@@ -1,6 +1,7 @@
 import uuid
 from http.server import BaseHTTPRequestHandler
 from http import cookies
+from argon2 import PasswordHasher
 import os
 import sys
 sys.path.insert(1, f'{os.getcwd()}/..')
@@ -14,10 +15,10 @@ class Handler(BaseHTTPRequestHandler):
     users = server_engine.get_users()
 
     #SETTINGS RELATED TO PASSWORD HASHING
-    PEPPER = "CHANGE_THIS"
-    MEMORY_COST = 4000000
-    TIME_COST = 1000000
-    PARALLELISM = 4
+    self.PEPPER = "CHANGE_THIS"
+    self.MEMORY_COST = 4000000
+    self.TIME_COST = 1000000
+    self.PARALLELISM = 4
 
 
     def do_GET(self):
@@ -77,7 +78,7 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == '/login':
             username = post_dict.get('username', '')
             pwd = post_dict.get('password', '')
-            password = hash_password(pwd)
+            password = self.hash_password(pwd)
 
             # Updates users dict
             self.users = self.server_engine.get_users()
@@ -112,7 +113,7 @@ class Handler(BaseHTTPRequestHandler):
 
         elif self.path == '/create-account':
             username = post_dict.get('username', '')
-            password = hash_password(post_dict.get('password', ''))
+            password = self.hash_password(post_dict.get('password', ''))
             gpg = post_dict.get('gpg', '')
             self.server_engine.create_user_if_not_exists(username, password, gpg)
             self.send_response(200)
@@ -160,7 +161,7 @@ class Handler(BaseHTTPRequestHandler):
                     return True
         return False
 
-        def hash_password(password):
+        def hash_password(self, password):
             ph = PasswordHasher(memory_cost = MEMORY_COST, time_cost = TIME_COST, parallelism = PARALLELISM)
             hashed_password = ph.hash(password, PEPPER)
             return hashed_password
