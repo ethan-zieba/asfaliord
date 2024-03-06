@@ -11,10 +11,12 @@ class Handler(BaseHTTPRequestHandler):
     server_engine = ServerEngine()
     users = server_engine.get_users()
 
-    #SETTINGS RELATED TO PASSWORD HASHING
-    PEPPER = "CHANGE_THIS"
+    # SETTINGS RELATED TO PASSWORD HASHING
+    # MEMORY_COST is the memory allocated to the hashing process, in Kibibyte
     MEMORY_COST = 99999
+    # TIME_COST is the number of iterations
     TIME_COST = 6
+    # PARALLELISM is the number of parallel threads
     PARALLELISM = 4
 
 
@@ -158,11 +160,13 @@ class Handler(BaseHTTPRequestHandler):
         return False
 
     def hash_password(self, password):
+        # Creates PasswordHasher object from argon2 module
         ph = PasswordHasher(memory_cost = self.MEMORY_COST, time_cost = self.TIME_COST, parallelism = self.PARALLELISM)
         hashed_password = ph.hash(password)
         return hashed_password
         
     def verify_password(self, password, hashed_password):
+        # Uses argon2 pre-builtin verify method
         ph = PasswordHasher(memory_cost = self.MEMORY_COST, time_cost = self.TIME_COST, parallelism = self.PARALLELISM)
         check = ph.verify(hashed_password, password)
         return check
