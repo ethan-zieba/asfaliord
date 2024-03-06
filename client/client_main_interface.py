@@ -7,6 +7,7 @@ from PIL import Image, ImageTk
 from tkinter import ttk
 import json
 import threading
+import os
 
 import credentials
 from asfaliord.client import client
@@ -56,7 +57,7 @@ class MainInterfaceScreen(tk.Frame):
     def create_left_frame(self):
         self.left_frame = tk.Frame(self, bg="#292929")
         self.left_frame.grid(row=0, column=0, sticky="nsew", pady=10)
-        logo_path = "assets/images/logo/asfaliord_logo.png"
+        logo_path = f"{os.getcwd()}/client/assets/images/logo/asfaliord_logo.png"
         logo_image = Image.open(logo_path)
         logo_size = (145, int((logo_image.size[1] / logo_image.size[0]) * 145))
         self.logo = ImageTk.PhotoImage(logo_image.resize(logo_size))
