@@ -72,7 +72,8 @@ class ServerEngine(server_database.ServerDatabase):
                                 f"{datetime.date.today().strftime('%Y/%m/%d')} - {username} - {message}", "2025-10-10")
         self.close_connection()
 
-    def create_channel_command(self, channel_name, channel_perm):
+    def create_channel_command(self, channel_name, channel_perm, username):
         self.open_connection()
-        self.create_channel(channel_name, channel_perm)
-        self.close_connection()
+        if int(self.server_engine.get_user_permission_level(username)) > 4:
+            self.create_channel(channel_name, channel_perm)
+            self.close_connection()
