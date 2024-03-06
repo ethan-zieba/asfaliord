@@ -210,7 +210,7 @@ class MainInterfaceScreen(tk.Frame):
             self.chat_history.see(tk.END)
 
     def disconnect_user(self):
-        pass
+        self.login_callback()
 
     def get_users(self):
         # Gets a tuple of (username, isConnected)
