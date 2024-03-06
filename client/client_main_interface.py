@@ -267,8 +267,9 @@ class MainInterfaceScreen(tk.Frame):
         self.login_callback()
 
     def get_users(self):
-        # Gets a tuple of (username, isConnected)
-        pass
+        # Should later get a tuple of (Username, isConnected)
+        users_list = self.client.get_users()
+        self.display_users(users_list)
 
     def display_users(self, users_list):
         self.user_list.delete(0, "end")
