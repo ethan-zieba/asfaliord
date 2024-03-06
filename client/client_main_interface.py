@@ -68,7 +68,7 @@ class MainInterfaceScreen(tk.Frame):
         self.disconnect_button = tk.Button(self.left_frame, text="Disconnect", command=self.disconnect_user,
                                      background='#2937FF',
                                      foreground='#04FF00', activebackground='#4DC9FF', activeforeground='#04FF00')
-        self.disconnect_button.grid(row=2, column=0, padx=10, pady=20, sticky="ew")
+        self.disconnect_button.grid(row=6, column=0, padx=10, pady=20, sticky="ew")
 
     def thread_get_server_infos(self):
         threading.Thread(target=self.get_text_channels).start()
