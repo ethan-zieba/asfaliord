@@ -70,7 +70,7 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_response(200)
                 self.send_header('Content-type', 'application/json')
                 self.end_headers()
-                self.wfile.write(json.dumps(channels.encode('utf-8')))
+                self.wfile.write(json.dumps(channels).encode("utf-8"))
 
         else:
             self.send_response(404)
@@ -113,7 +113,7 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_response(200)
                 self.end_headers()
                 channel_id, message = message.split('C', 1)
-                if message[0] == "/":
+                if message[2] == "/":
                     if int(self.server_engine.get_user_permission_level(username)) > 4:
                         if "create_text_channel" in message:
                             _, channel_name, channel_perm = message.split(" -")
