@@ -270,6 +270,8 @@ class MainInterfaceScreen(tk.Frame):
     def get_users(self):
         # Should later get a tuple of (Username, isConnected)
         users_list = self.client.get_users()
+        print("TYPEEEEEEE:", type(users_list))
+        print("USERS LIST: ", users_list)
         self.display_users(users_list)
 
     def display_users(self, users_list):

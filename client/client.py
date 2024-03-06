@@ -181,7 +181,7 @@ class Client:
         if self.cookie is not None:
             headers = {'Cookie': f'session_id={self.cookie}'}
             response = self.session.get(f"{self.url}/get-users", headers=headers, proxies=self.proxies)
-            return response
+            return response.json()
 
 
 if __name__ == "__main__":

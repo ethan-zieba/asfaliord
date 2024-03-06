@@ -57,6 +57,7 @@ class ServerEngine(server_database.ServerDatabase):
         return data
 
     def get_usernames(self):
+        self.open_connection()
         users_list = self.read_all_users()
         data = []
         for user in users_list:
