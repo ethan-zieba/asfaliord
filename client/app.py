@@ -35,11 +35,13 @@ class App(tk.Tk):
 
     def go_to_create_account(self):
         # Calls the create_account screen
+        # Try to put the object instance directly here when go_to_create_account is called
         self.geometry("410x410")
         self.show_screen(self.cr_account_screen)
 
     def go_to_main_interface(self):
         # Calls the main_interface screen
+        # Try to put the object instance directly here when go_to_main_interface is called
         self.geometry("1400x700")
         self.main_interface.client = self.client
         self.main_interface.disconnect = False
