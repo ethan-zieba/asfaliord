@@ -1,3 +1,6 @@
+import threading
+import pyaudio
+import socket
 import requests
 
 
@@ -11,6 +14,51 @@ class Client:
         'https': 'socks5h://localhost:9050'
         }
         self.cookie = None
+
+        # Voice channel part
+        self.stop_threads = False
+        self.audio = pyaudio.PyAudio()
+        self.input_stream = self.audio.open(format=pyaudio.paInt16, channels=1, rate=44100, input=True,
+                                            frames_per_buffer=1024)
+        self.output_stream = self.audio.open(format=pyaudio.paInt16, channels=1, rate=44100, output=True)
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.connection = None
+
+    # We use this method here instead of putting variables in __init__ so we can easily manipulate and/or remove it
+    # after
+    def get_host_port(self, host, port, peer_ip):
+        self.host = host
+        self.port = port
+        self.peer_ip = peer_ip
+
+    def start_call(self):
+        self.stop_threads = False
+        self.sock.connect((self.peer_ip, self.port))
+        self.connection = self.sock
+        # Here we call our two main audio functions using threads, so we can call them in parallel
+        send_thread = threading.Thread(target=self.send_audio).start()
+        receive_thread = threading.Thread(target=self.receive_audio).start()
+
+    def stop_call(self):
+        self.stop_threads = True
+        self.sock.close()
+        self.input_stream.stop_stream()
+        self.input_stream.close()
+
+        self.output_stream.stop_stream()
+        self.output_stream.close()
+
+        self.audio.terminate()
+
+    def send_audio(self):
+        while not self.stop_threads:
+            data = self.input_stream.read(1024)
+            self.connection.sendall(data)
+
+    def receive_audio(self):
+        while not self.stop_threads:
+            data = self.connection.recv(1024)
+            self.connection.sendall(data)
 
     def create_account(self, username, password, gpg):
         # Data to send via request
@@ -89,7 +137,5 @@ if __name__ == "__main__":
     import credentials
     import json
     client = Client(credentials.tor_address)
-    client.authenticate(credentials.username, credentials.password)
-    print("\n\n\n")
-    messages = client.get_messages()
-    print(json.loads(messages), type(json.loads(messages)))
+    client.get_host_port('127.0.0.1', 25567)
+    client.stop_call()
