@@ -116,7 +116,7 @@ class MainInterfaceScreen(tk.Frame):
                                     background="#000F44", foreground="#04FF00", font=("Classic Console Neue", 10))
         self.chat_history.grid(row=2, column=0, sticky="nsew")
         self.chat_history_scroll = ttk.Scrollbar(self.middle_frame, command=self.chat_history.yview, orient=tk.VERTICAL)
-        self.chat_history_scroll.grid(row=0, column=1, sticky="ns")
+        self.chat_history_scroll.grid(row=3, column=1, sticky="ns")
         self.chat_history['yscrollcommand'] = self.chat_history_scroll.set
         self.input_field = tk.Entry(self.middle_frame, foreground='#04FF00', bg='#000F44')
         self.input_field.grid(row=3, column=0, sticky="ew", pady=10, padx=10)
