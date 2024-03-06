@@ -33,7 +33,7 @@ class MainInterfaceScreen(tk.Frame):
         self.option_add("*Font", custom_font)
         self.client = client
         self.grid(row=0, column=0, sticky=tk.NSEW)
-
+        self.disconnect = False
         self.current_channel = 1
         self.dict_text_channels = {"1": "Lounge"}
         # Logo and channels in the top left corner
@@ -170,8 +170,8 @@ class MainInterfaceScreen(tk.Frame):
 
     def get_messages_coroutine(self):
         threading.Thread(target=self.messages_background_call).start()
-        print("Getting messages...")
-        self.start_messages_coroutine()
+        if not self.disconnect:
+            self.start_messages_coroutine()
 
     def messages_background_call(self):
         self.previous_dict_messages = self.dict_messages
@@ -210,6 +210,7 @@ class MainInterfaceScreen(tk.Frame):
             self.chat_history.see(tk.END)
 
     def disconnect_user(self):
+        self.disconnect = True
         self.login_callback()
 
     def get_users(self):
