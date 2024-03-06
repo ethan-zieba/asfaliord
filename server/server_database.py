@@ -28,9 +28,9 @@ class ServerDatabase:
         self.cursor.execute(query, data)
         self.cnx.commit()
 
-    def upgrade_permissions(self, username):
-        permissions_upgraded = int(self.get_user_permission_level(username)) + 1
-        query = f"UPDATE users SET perm_lvl = {permissions_upgraded} WHERE username = {username}"
+    def upgrade_permissions(self, username_):
+        permissions_upgraded = int(self.get_user_permission_level(username_)) + 1
+        query = f"UPDATE users SET perm_lvl = {permissions_upgraded} WHERE username = {username_}"
         self.cursor.execute(query)
         self.cnx.commit()
 
