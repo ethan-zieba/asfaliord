@@ -68,7 +68,7 @@ class ServerDatabase:
     def count_channel(self):
         query = "SELECT COUNT(*) FROM channels"
         self.cursor.execute(query)
-        return self.cursor.fetchone()
+        return self.cursor.fetchone()[0]
 
     def read_channel(self, channel_id):
         query = "SELECT * FROM channels WHERE id = %s"
