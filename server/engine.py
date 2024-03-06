@@ -62,7 +62,7 @@ class ServerEngine(server_database.ServerDatabase):
         data = []
         for user in users_list:
             name = str(user[1])
-            data.append = name
+            data.append(name)
         self.close_connection()
         return data
 
