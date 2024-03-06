@@ -60,6 +60,36 @@ class Client:
             data = self.connection.recv(1024)
             self.connection.sendall(data)
 
+    def standby_before_call(self, tkinter_frame):
+        while not self.stop_threads:
+            try:
+                self.sock.bind('0.0.0.0', self.port)
+                self.sock.listen(1)
+                print('WAITING FOR A CALL')
+                client_socket, _ = self.sock.accept()
+                self.start_call()
+            except Exception:
+                print(f"ERROR WHILE WAITING FOR CALL: {Exception}")
+                tkinter_frame.after(4000, print('TRYING AGAIN...'))
+
+    def send_own_ip(self, channel):
+        ip_s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        ip_s.connect(("8.8.8.8", 80))
+        data = {"username": self.username, "ip": self.get_own_ip(), "channel": channel}
+        ip_s.close()
+        headers = {'Cookie': f'session_id={self.cookie}'}
+        print(
+            f"SENDING OWN IP\nHEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}\nDATA: {data}")
+        response = self.session.post(f"{self.url}/send-ip", data=data, headers=headers, proxies=self.proxies)
+        print(response.status_code)
+
+    def get_own_ip(self):
+        ip_s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        ip_s.connect(("8.8.8.8", 80))
+        ip = ip_s.getsockname()[0]
+        ip_s.close()
+        return ip
+
     def create_account(self, username, password, gpg):
         # Data to send via request
         data = {"username": username, "password": password, "gpg": gpg}
@@ -98,7 +128,18 @@ class Client:
         else:
             print("AUTHENTICATION ERROR: No auth cookie")
 
-    def get_channels(self):
+    def get_voice_channels(self):
+        if self.cookie is not None:
+            headers = {'Cookie': f'session_id={self.cookie}'}
+            print(
+                f"ASKING FOR VOICE CHANNELS NAMES AND USERS\nWITH HEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}")
+            response = self.session.get(f"{self.url}/get-voice-channels", headers=headers, proxies=self.proxies)
+            print(response.status_code)
+            # Response is in a json format
+            print(response.json().replace("'", '"'))
+            return response.json().replace("'", '"')
+
+    def get_text_channels(self):
         if self.cookie is not None:
             headers = {'Cookie': f'session_id={self.cookie}'}
             print(f"ASKING FOR CHANNELS NAMES\nWITH HEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}")
@@ -137,5 +178,5 @@ if __name__ == "__main__":
     import credentials
     import json
     client = Client(credentials.tor_address)
-    client.get_host_port('127.0.0.1', 25567)
-    client.stop_call()
+    client.get_host_port('127.0.0.1', 25567, credentials.other_ip)
+    client.start_call()
