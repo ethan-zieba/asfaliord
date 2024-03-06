@@ -13,9 +13,10 @@ from asfaliord.client import client
 
 
 class MainInterfaceScreen(tk.Frame):
-    def __init__(self, master, client):
+    def __init__(self, master, client, login_callback):
         tk.Frame.__init__(self, master)
         master.bind("<Return>", self.get_message_input)
+        self.login_callback = login_callback
         style = ttk.Style()
         style.theme_use("clam")
         style.configure("Custom.Vertical.TScrollbar",
