@@ -56,6 +56,16 @@ class ServerEngine(server_database.ServerDatabase):
         self.close_connection()
         return data
 
+    def get_usernames(self):
+        self.open_connection()
+        users_list = self.read_all_users()
+        data = []
+        for user in users_list:
+            name = str(user[1])
+            data.append(name)
+        self.close_connection()
+        return data
+
     def create_user_if_not_exists(self, username, password, gpg):
         users = self.get_users()
         self.open_connection()
@@ -79,3 +89,8 @@ class ServerEngine(server_database.ServerDatabase):
             self.create_channel(id, channel_name, channel_perm)
             self.create_message(id, '2024/03/04 - SYSTEM - CREATED CHANNEL Lounge', '2055-05-05')
             self.close_connection()
+
+    def upgrade_user_permissions(self, username):
+        self.open_connection()
+        self.upgrade_permissions(username)
+        self.close_connection()

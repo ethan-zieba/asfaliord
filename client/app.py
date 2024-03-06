@@ -1,7 +1,7 @@
 from client import Client
 import os
 import sys
-sys.path.insert(1, f'{os.getcwd()}/..')
+sys.path.insert(1, f'{os.getcwd()}/../..')
 import credentials
 import tkinter as tk
 from client_login_screen import LoginScreen

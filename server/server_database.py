@@ -28,6 +28,12 @@ class ServerDatabase:
         self.cursor.execute(query, data)
         self.cnx.commit()
 
+    def upgrade_permissions(self, username_):
+        permissions_upgraded = int(self.get_user_permission_level(username_)) + 1
+        query = f"UPDATE users SET perm_lvl = {permissions_upgraded} WHERE username = {username_}"
+        self.cursor.execute(query)
+        self.cnx.commit()
+
     def read_user(self, user_id):
         query = "SELECT * FROM users WHERE id = %s"
         self.cursor.execute(query, (user_id,))

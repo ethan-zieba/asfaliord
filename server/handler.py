@@ -71,7 +71,13 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_header('Content-type', 'application/json')
                 self.end_headers()
                 self.wfile.write(json.dumps(channels).encode("utf-8"))
-
+        elif self.path == "/get-users":
+            if self.valid_auth_cookie():
+                self.send_response(200)
+                self.send_header('Content-type', 'text/plain')
+                self.end_headers()
+                users = self.server_engine.get_usernames()
+                self.wfile.write(json.dumps(users).encode("utf-8"))
         else:
             self.send_response(404)
             self.end_headers()
@@ -117,6 +123,9 @@ class Handler(BaseHTTPRequestHandler):
                     if "create_text_channel" in message:
                         _, channel_name, channel_perm = message.split("+-")
                         self.server_engine.create_channel_command(channel_name, channel_perm, username)
+                    if "upgrade_user_permissions" in message:
+                        _, user_name = message.split("+-")
+                        self.server_engine.upgrade_user_permissions(user_name)
                 else:
                     self.server_engine.save_message(username, message, channel_id)
             else:

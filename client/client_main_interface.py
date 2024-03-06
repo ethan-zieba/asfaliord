@@ -77,6 +77,7 @@ class MainInterfaceScreen(tk.Frame):
         threading.Thread(target=self.get_text_channels).start()
         threading.Thread(target=self.get_server_namedesc).start()
         threading.Thread(target=self.get_voice_channels).start()
+        threading.Thread(target=self.get_users()).start()
 
     def get_server_namedesc(self):
         # Gets the server name when connecting to it
@@ -267,8 +268,11 @@ class MainInterfaceScreen(tk.Frame):
         self.login_callback()
 
     def get_users(self):
-        # Gets a tuple of (username, isConnected)
-        pass
+        # Should later get a tuple of (Username, isConnected)
+        users_list = self.client.get_users()
+        print("TYPEEEEEEE:", type(users_list))
+        print("USERS LIST: ", users_list)
+        self.display_users(users_list)
 
     def display_users(self, users_list):
         self.user_list.delete(0, "end")
