@@ -59,7 +59,7 @@ class MainInterfaceScreen(tk.Frame):
     def create_left_frame(self):
         self.left_frame = tk.Frame(self, bg="#292929")
         self.left_frame.grid(row=0, column=0, sticky="nsew", pady=10)
-        logo_path = f"{os.getcwd()}/client/assets/images/logo/asfaliord_logo.png"
+        logo_path = f"{os.getcwd()}/assets/images/logo/asfaliord_logo.png"
         logo_image = Image.open(logo_path)
         logo_size = (145, int((logo_image.size[1] / logo_image.size[0]) * 145))
         self.logo = ImageTk.PhotoImage(logo_image.resize(logo_size))
@@ -84,9 +84,11 @@ class MainInterfaceScreen(tk.Frame):
         self.dict_text_channels = json.loads(self.client.get_text_channels())
         for channel in self.dict_text_channels:
             self.dict_messages[channel] = [f"Now - SYSTEM - Fetching messages of this channel: {self.dict_text_channels[channel]}"]
+        self.create_left_buttons()
 
     def get_voice_channels(self):
         self.dict_voice_channels = json.load(self.client.get_voice_channels())
+        self.create_left_buttons()
 
     def create_left_buttons(self):
         # self.dict_channels is a dictionary with the keys being the channel id and the values being the channel name
@@ -108,6 +110,7 @@ class MainInterfaceScreen(tk.Frame):
                       foreground='#04FF00', activebackground='#4DC9FF', activeforeground='#04FF00').grid(
                 row=i + 1, column=0, sticky="ew", padx=10, pady=5
             )
+        i += 1
         self.voice_channel_label = tk.Label(self.left_frame, text=f"Opened voice channel:\nNone",
                                            background="#000F44", foreground="#04FF00", font=("Classic Console Neue", 10))
         self.voice_channel_label.grid(row=i+1, column=0, padx=10, pady=20, sticky="ew")
@@ -118,6 +121,7 @@ class MainInterfaceScreen(tk.Frame):
 
     def switch_voice_channel(self, channel_id):
         # Checks if already connected in this channel, if yes: disconnects
+        threading.Thread(target=self.get_voice_channels).start()
         if self.current_voice_channel == channel_id:
             self.current_voice_channel = None
             self.voice_channel_label.configure(
@@ -130,7 +134,7 @@ class MainInterfaceScreen(tk.Frame):
             # Sends own ip to server
             self.client.send_own_ip(channel_id)
             self.voice_channel_label.configure(text=f"Opened voice channel: \n"
-                                                    f"{self.dict_voice_channels[self.current_channel][0]}",
+                                                    f"{self.dict_voice_channels[self.current_voice_channel][0]}",
                                                font=("Classic Console Neue", 10))
             # Gets peer_ip if exists
             peer_ip = self.client.get_other_ip(channel_id)
@@ -141,6 +145,7 @@ class MainInterfaceScreen(tk.Frame):
                 self.client.standby_before_call(self)
 
     def switch_text_channel(self, channel_id):
+        threading.Thread(target=self.get_text_channels).start()
         self.current_channel = channel_id
         self.text_channel_label.configure(text=f"Opened text channel:\n{self.dict_text_channels[self.current_channel]}",
                                           font=("Classic Console Neue", 10))

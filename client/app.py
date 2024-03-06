@@ -47,7 +47,7 @@ class App(tk.Tk):
         self.main_interface.disconnect = False
         self.main_interface.start_messages_coroutine()
         self.main_interface.thread_get_server_infos()
-        self.main_interface.create_text_channels_buttons()
+        self.main_interface.create_left_buttons()
         self.show_screen(self.main_interface)
 
     def show_screen(self, screen):

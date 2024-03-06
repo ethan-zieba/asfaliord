@@ -59,8 +59,8 @@ class ServerDatabase:
         self.cnx.commit()
 
     # Channels CRUD operations
-    def create_channel(self, name, min_perm_lvl, is_text):
-        data = (name, min_perm_lvl, is_text)
+    def create_channel(self, name, min_perm_lvl):
+        data = (name, min_perm_lvl)
         query = "INSERT INTO channels (name, perm_lvl) VALUES (%s, %s)"
         self.cursor.execute(query, data)
         self.cnx.commit()

@@ -23,7 +23,7 @@ class CreateAccountScreen(tk.Frame):
 
     def create_widgets(self):
         # Using getcwd because Linux did not understand the path as Windows did
-        logo_path = rf"{os.getcwd()}/client/assets/images/logo/asfaliord_logo.png"
+        logo_path = rf"{os.getcwd()}/assets/images/logo/asfaliord_logo.png"
         logo_image = Image.open(logo_path)
         logo_size = (150, int((logo_image.size[1] / logo_image.size[0]) * 150))
 

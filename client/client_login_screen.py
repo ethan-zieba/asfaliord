@@ -28,7 +28,7 @@ class LoginScreen(tk.Frame):
         self.grid_placement()
 
     def create_widgets(self):
-        logo_path = f"{os.getcwd()}/client/assets/images/logo/asfaliord_logo.png"
+        logo_path = f"{os.getcwd()}/assets/images/logo/asfaliord_logo.png"
         logo_image = Image.open(logo_path)
         logo_size = (150, int((logo_image.size[1]/logo_image.size[0]) * 150))
 
@@ -43,7 +43,7 @@ class LoginScreen(tk.Frame):
         self.entry_username = tk.Entry(self, foreground='#04FF00', bg='#000F44')
         self.entry_password = tk.Entry(self, show="*", foreground='#04FF00', bg='#000F44')
 
-        remembered_credentials = json.load(open(f"{os.getcwd()}/client/remember_credentials.json"))
+        remembered_credentials = json.load(open(f"{os.getcwd()}/remember_credentials.json"))
 
 
         self.remember_user = tk.IntVar()

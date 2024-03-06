@@ -113,7 +113,13 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_response(200)
                 self.end_headers()
                 channel_id, message = message.split('C', 1)
-                self.server_engine.save_message(username, message, channel_id)
+                if message[0] == "/":
+                    if int(self.server_engine.get_user_permission_level(username)) > 4:
+                        if "create_text_channel" in message:
+                            _, channel_name, channel_perm = message.split(" -")
+                            self.server_engine.create_channel(channel_name, channel_perm)
+                else:
+                    self.server_engine.save_message(username, message, channel_id)
             else:
                 self.send_response(401)
                 self.end_headers()
