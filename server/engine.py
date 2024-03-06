@@ -71,3 +71,8 @@ class ServerEngine(server_database.ServerDatabase):
             self.create_message(channel_id,
                                 f"{datetime.date.today().strftime('%Y/%m/%d')} - {username} - {message}", "2025-10-10")
         self.close_connection()
+
+    def create_channel_command(self, channel_name, channel_perm):
+        self.open_connection()
+        self.create_channel(channel_name, channel_perm)
+        self.close_connection()

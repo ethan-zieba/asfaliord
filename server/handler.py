@@ -117,7 +117,7 @@ class Handler(BaseHTTPRequestHandler):
                     if int(self.server_engine.get_user_permission_level(username)) > 4:
                         if "create_text_channel" in message:
                             _, channel_name, channel_perm = message.split(" -")
-                            self.server_engine.create_channel(channel_name, channel_perm)
+                            self.server_engine.create_channel_command(channel_name, channel_perm)
                 else:
                     self.server_engine.save_message(username, message, channel_id)
             else:
