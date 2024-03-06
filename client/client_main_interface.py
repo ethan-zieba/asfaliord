@@ -122,6 +122,7 @@ class MainInterfaceScreen(tk.Frame):
     def switch_voice_channel(self, channel_id):
         # Checks if already connected in this channel, if yes: disconnects
         threading.Thread(target=self.get_voice_channels).start()
+        print(f"CURRENT VOICE CHANNEL: {self.current_voice_channel}")
         if self.current_voice_channel == channel_id:
             self.current_voice_channel = None
             self.voice_channel_label.configure(
@@ -139,8 +140,8 @@ class MainInterfaceScreen(tk.Frame):
             # Gets peer_ip if exists
             peer_ip = self.client.get_other_ip(channel_id)
             if peer_ip != '0':
-                self.client.start_call()
-                self.client.get_host_port((self.client.get_own_ip(), 25567), peer_ip)
+                self.client.get_host_port(self.client.get_own_ip(), 25567, peer_ip)
+                self.client.standby_before_call(self)
             else:
                 self.client.standby_before_call(self)
 

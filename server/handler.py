@@ -113,7 +113,7 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_response(200)
                 self.end_headers()
                 channel_id, message = message.split('C', 1)
-                if message[2:4] == "%2F":
+                if "%2F" in message[:6]:
                     if int(self.server_engine.get_user_permission_level(username)) > 4:
                         if "create_text_channel" in message:
                             _, channel_name, channel_perm = message.split(" -")

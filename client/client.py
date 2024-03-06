@@ -81,7 +81,6 @@ class Client:
         print(
             f"SENDING OWN IP\nHEADERS: {headers}\nSENDING COOKIE: {self.cookie}\nUSING PROXIES: {self.proxies}\nDATA: {data}")
         response = self.session.post(f"{self.url}/send-ip", data=data, headers=headers, proxies=self.proxies)
-        print(response.status_code)
 
     def get_own_ip(self):
         ip_s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -138,6 +137,11 @@ class Client:
             # Response is in a json format
             print(response.json())
             return response.json()
+
+    def get_other_ip(self, channel_id):
+        channels = self.get_voice_channels()
+        other_ip = channels[channel_id][2]
+        return other_ip
 
     def get_text_channels(self):
         if self.cookie is not None:
