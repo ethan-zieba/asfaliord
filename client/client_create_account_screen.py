@@ -63,6 +63,9 @@ class CreateAccountScreen(tk.Frame):
         self.label_password_error.grid(row=1, column=2, rowspan=4, padx=10, sticky=tk.W)
         self.button_back.grid(row=5, column=0, padx=10, pady=10)
         self.button_create_account.grid(row=5, column=1, padx=10, pady=30)
+        # Configure for responsive app
+        for i in range(5):
+            self.grid_columnconfigure(i, weight=0)
 
     def create_account(self):
         username = self.entry_username.get()
