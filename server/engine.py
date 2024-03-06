@@ -75,5 +75,7 @@ class ServerEngine(server_database.ServerDatabase):
     def create_channel_command(self, channel_name, channel_perm, username):
         self.open_connection()
         if int(self.get_user_permission_level(username)) > 4:
-            self.create_channel(channel_name, channel_perm)
+            id = int(self.count_channel()) + 1
+            self.create_channel(id, channel_name, channel_perm)
+            self.create_message(id, '2024/03/04 - SYSTEM - CREATED CHANNEL Lounge', '2055-05-05')
             self.close_connection()

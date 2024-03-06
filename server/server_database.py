@@ -59,11 +59,16 @@ class ServerDatabase:
         self.cnx.commit()
 
     # Channels CRUD operations
-    def create_channel(self, name, min_perm_lvl):
-        data = (name, min_perm_lvl)
-        query = "INSERT INTO channels (name, perm_lvl) VALUES (%s, %s)"
+    def create_channel(self, id, name, min_perm_lvl):
+        data = (id, name, min_perm_lvl)
+        query = "INSERT INTO channels (id, name, perm_lvl) VALUES (%s, %s, %s)"
         self.cursor.execute(query, data)
         self.cnx.commit()
+
+    def count_channel(self):
+        query = "SELECT COUNT(*) FROM channels"
+        self.cursor.execute()
+        return self.cursor.fetchone()
 
     def read_channel(self, channel_id):
         query = "SELECT * FROM channels WHERE id = %s"
