@@ -61,7 +61,7 @@ class Client:
             self.connection.sendall(data)
 
     def standby_before_call(self, tkinter_frame):
-        while not self.stop_threads:
+        for i in range(3):
             try:
                 self.sock.bind('0.0.0.0', self.port)
                 self.sock.listen(1)

@@ -68,6 +68,10 @@ class MainInterfaceScreen(tk.Frame):
         self.text_channel_label = tk.Label(self.left_frame, text=f"Opened text channel:\n{self.dict_text_channels['1']}",
                                            background="#000F44", foreground="#04FF00", font=("Classic Console Neue", 10))
         self.text_channel_label.grid(row=1, column=0, padx=10, pady=20, sticky="ew")
+        self.disconnect_button = tk.Button(self.left_frame, text="Disconnect", command=self.disconnect_user,
+                                           background='#2937FF',
+                                           foreground='#04FF00', activebackground='#4DC9FF', activeforeground='#04FF00')
+        self.disconnect_button.grid(row=8, column=0, padx=10, pady=20, sticky="ew")
 
     def thread_get_server_infos(self):
         threading.Thread(target=self.get_text_channels).start()
@@ -92,14 +96,14 @@ class MainInterfaceScreen(tk.Frame):
 
     def create_left_buttons(self):
         # self.dict_channels is a dictionary with the keys being the channel id and the values being the channel name
-        i = 0
+        i = 1
         for channel in self.dict_text_channels:
             i += 1
             # Creates a button for each channel for which we have the permission (server-side permission check)
             tk.Button(self.left_frame, text=self.dict_text_channels[channel], command=lambda channel_id=channel: self.switch_text_channel(channel_id),
                                      background='#2937FF',
                                      foreground='#04FF00', activebackground='#4DC9FF', activeforeground='#04FF00').grid(
-                row=i+1, column=0, sticky="ew", padx=10, pady=5
+                row=i, column=0, sticky="ew", padx=10, pady=5
             )
         for voice_channel in self.dict_voice_channels:
             i += 1
@@ -108,16 +112,13 @@ class MainInterfaceScreen(tk.Frame):
                       command=lambda channel_id=voice_channel: self.switch_voice_channel(channel_id),
                       background='#2937FF',
                       foreground='#04FF00', activebackground='#4DC9FF', activeforeground='#04FF00').grid(
-                row=i + 1, column=0, sticky="ew", padx=10, pady=5
+                row=i, column=0, sticky="ew", padx=10, pady=5
             )
         i += 1
         self.voice_channel_label = tk.Label(self.left_frame, text=f"Opened voice channel:\nNone",
                                            background="#000F44", foreground="#04FF00", font=("Classic Console Neue", 10))
         self.voice_channel_label.grid(row=i+1, column=0, padx=10, pady=20, sticky="ew")
-        self.disconnect_button = tk.Button(self.left_frame, text="Disconnect", command=self.disconnect_user,
-                                           background='#2937FF',
-                                           foreground='#04FF00', activebackground='#4DC9FF', activeforeground='#04FF00')
-        self.disconnect_button.grid(row=i+2, column=0, padx=10, pady=20, sticky="ew")
+
 
     def switch_voice_channel(self, channel_id):
         # Checks if already connected in this channel, if yes: disconnects
@@ -131,9 +132,10 @@ class MainInterfaceScreen(tk.Frame):
             self.client.stop_call()
         # If not:
         else:
-            self.current_voice_channel = channel_id
+            self.current_voice_channel = str(channel_id)
             # Sends own ip to server
             self.client.send_own_ip(channel_id)
+            print(self.dict_voice_channels[self.current_voice_channel][0])
             self.voice_channel_label.configure(text=f"Opened voice channel: \n"
                                                     f"{self.dict_voice_channels[self.current_voice_channel][0]}",
                                                font=("Classic Console Neue", 10))
@@ -141,7 +143,7 @@ class MainInterfaceScreen(tk.Frame):
             peer_ip = self.client.get_other_ip(channel_id)
             if peer_ip != '0':
                 self.client.get_host_port(self.client.get_own_ip(), 25567, peer_ip)
-                self.client.standby_before_call(self)
+                threading.Thread(target=self.client.standby_before_call(self)).start()
             else:
                 self.client.standby_before_call(self)
 
@@ -167,7 +169,7 @@ class MainInterfaceScreen(tk.Frame):
                                     background="#000F44", foreground="#04FF00", font=("Classic Console Neue", 10))
         self.chat_history.grid(row=2, column=0, sticky="nsew")
         self.chat_history_scroll = ttk.Scrollbar(self.middle_frame, command=self.chat_history.yview, orient=tk.VERTICAL)
-        self.chat_history_scroll.grid(row=3, column=1, sticky="ns")
+        self.chat_history_scroll.grid(row=2, column=1, sticky="ns")
         self.chat_history['yscrollcommand'] = self.chat_history_scroll.set
         self.input_field = tk.Entry(self.middle_frame, foreground='#04FF00', bg='#000F44')
         self.input_field.grid(row=3, column=0, sticky="ew", pady=10, padx=10)
