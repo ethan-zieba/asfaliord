@@ -87,7 +87,7 @@ class MainInterfaceScreen(tk.Frame):
         self.create_left_buttons()
 
     def get_voice_channels(self):
-        self.dict_voice_channels = json.load(self.client.get_voice_channels())
+        self.dict_voice_channels = self.client.get_voice_channels()
         self.create_left_buttons()
 
     def create_left_buttons(self):

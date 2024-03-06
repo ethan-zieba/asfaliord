@@ -136,8 +136,8 @@ class Client:
             response = self.session.get(f"{self.url}/get-voice-channels", headers=headers, proxies=self.proxies)
             print(response.status_code)
             # Response is in a json format
-            print(response.json().replace("'", '"'))
-            return response.json().replace("'", '"')
+            print(response.json())
+            return response.json()
 
     def get_text_channels(self):
         if self.cookie is not None:
