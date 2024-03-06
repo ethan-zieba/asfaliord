@@ -77,6 +77,7 @@ class MainInterfaceScreen(tk.Frame):
         threading.Thread(target=self.get_text_channels).start()
         threading.Thread(target=self.get_server_namedesc).start()
         threading.Thread(target=self.get_voice_channels).start()
+        threading.Thread(target=self.get_users()).start()
 
     def get_server_namedesc(self):
         # Gets the server name when connecting to it
