@@ -3,6 +3,7 @@ from http.server import BaseHTTPRequestHandler
 from http import cookies
 from argon2 import PasswordHasher
 from engine import ServerEngine
+import json
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -10,6 +11,7 @@ class Handler(BaseHTTPRequestHandler):
     active_sessions = {}
     server_engine = ServerEngine()
     users = server_engine.get_users()
+    voice_channels = {"1": ["Main"]}
 
     # SETTINGS RELATED TO PASSWORD HASHING
     # MEMORY_COST is the memory allocated to the hashing process, in Kibibyte
@@ -44,7 +46,7 @@ class Handler(BaseHTTPRequestHandler):
         elif self.path == '/get-channels':
             if self.valid_auth_cookie():
                 # Content is in the form of a dict: each key is the channel id and its value is the channel's name
-                # Here we find the session_id of the user so we can get its username and then the channels he has access to
+                # Here we find the session_id of the user, so we can get its username and then the channels he has access to
                 session_id = self.headers['Cookie'].split("=")[1]
                 channels = self.server_engine.request_channels(self.__class__.active_sessions[session_id])
                 self.send_response(200)
@@ -62,6 +64,14 @@ class Handler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(b'La Plateforme - Server for oral presentation, 3 channels available: Lounge, '
                                  b'Private Lounge and Extremely Private')
+        elif self.path == "/get-voice-channels":
+            if self.valid_auth_cookie():
+                channels = self.voice_channels
+                self.send_response(200)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps(channels.encode('utf-8')))
+
         else:
             self.send_response(404)
             self.end_headers()
@@ -108,6 +118,16 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_response(401)
                 self.end_headers()
                 self.wfile.write('AUTHENTICATION ERROR'.encode('utf-8'))
+
+        elif self.path == '/send-ip':
+            if self.valid_auth_cookie():
+                ip = post_dict.get('ip')
+                username = self.__class__.active_sessions[self.headers['Cookie'].split("=")[1]]
+                channel = post_dict.get('channel')
+                print(f"{username} SENDS ITS IP: {ip}\nWAITS FOR A CALL IN CHANNEL: {channel}")
+                self.send_response(200)
+                self.end_headers()
+                self.voice_channels[channel].append(ip)
 
         elif self.path == '/create-account':
             username = post_dict.get('username', '')

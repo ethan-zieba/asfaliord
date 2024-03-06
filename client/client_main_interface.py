@@ -37,6 +37,8 @@ class MainInterfaceScreen(tk.Frame):
         self.disconnect = False
         self.current_channel = 1
         self.dict_text_channels = {"1": "Lounge"}
+        self.current_voice_channel = None
+        self.dict_voice_channels = {"1": ["Lounge vocal"]}
         # Logo and channels in the top left corner
         self.create_left_frame()
         # Chat in the center
@@ -50,7 +52,7 @@ class MainInterfaceScreen(tk.Frame):
         self.grid_columnconfigure(1, weight=4)
         self.grid_columnconfigure(2, weight=0)
 
-        self.create_text_channels_buttons()
+        self.create_left_buttons()
         self.dict_messages = {"1": ["Now - SYSTEM - Fetching all messages..."]}
         self.display_messages(self.dict_messages)
 
@@ -66,14 +68,11 @@ class MainInterfaceScreen(tk.Frame):
         self.text_channel_label = tk.Label(self.left_frame, text=f"Opened text channel:\n{self.dict_text_channels['1']}",
                                            background="#000F44", foreground="#04FF00", font=("Classic Console Neue", 10))
         self.text_channel_label.grid(row=1, column=0, padx=10, pady=20, sticky="ew")
-        self.disconnect_button = tk.Button(self.left_frame, text="Disconnect", command=self.disconnect_user,
-                                     background='#2937FF',
-                                     foreground='#04FF00', activebackground='#4DC9FF', activeforeground='#04FF00')
-        self.disconnect_button.grid(row=6, column=0, padx=10, pady=20, sticky="ew")
 
     def thread_get_server_infos(self):
         threading.Thread(target=self.get_text_channels).start()
         threading.Thread(target=self.get_server_namedesc).start()
+        threading.Thread(target=self.get_voice_channels).start()
 
     def get_server_namedesc(self):
         # Gets the server name when connecting to it
@@ -82,19 +81,64 @@ class MainInterfaceScreen(tk.Frame):
         self.server_description.configure(text=server_description)
 
     def get_text_channels(self):
-        self.dict_text_channels = json.loads(self.client.get_channels())
+        self.dict_text_channels = json.loads(self.client.get_text_channels())
         for channel in self.dict_text_channels:
             self.dict_messages[channel] = [f"Now - SYSTEM - Fetching messages of this channel: {self.dict_text_channels[channel]}"]
 
-    def create_text_channels_buttons(self):
+    def get_voice_channels(self):
+        self.dict_voice_channels = json.load(self.client.get_voice_channels())
+
+    def create_left_buttons(self):
         # self.dict_channels is a dictionary with the keys being the channel id and the values being the channel name
+        i = 0
         for channel in self.dict_text_channels:
+            i += 1
             # Creates a button for each channel for which we have the permission (server-side permission check)
             tk.Button(self.left_frame, text=self.dict_text_channels[channel], command=lambda channel_id=channel: self.switch_text_channel(channel_id),
                                      background='#2937FF',
                                      foreground='#04FF00', activebackground='#4DC9FF', activeforeground='#04FF00').grid(
-                row=int(channel)+1, column=0, sticky="ew", padx=10, pady=5
+                row=i+1, column=0, sticky="ew", padx=10, pady=5
             )
+        for voice_channel in self.dict_voice_channels:
+            i += 1
+            # Creates a button for each channel for which we have the permission (server-side permission check)
+            tk.Button(self.left_frame, text=self.dict_voice_channels[voice_channel][0],
+                      command=lambda channel_id=voice_channel: self.switch_voice_channel(channel_id),
+                      background='#2937FF',
+                      foreground='#04FF00', activebackground='#4DC9FF', activeforeground='#04FF00').grid(
+                row=i + 1, column=0, sticky="ew", padx=10, pady=5
+            )
+        self.voice_channel_label = tk.Label(self.left_frame, text=f"Opened voice channel:\nNone",
+                                           background="#000F44", foreground="#04FF00", font=("Classic Console Neue", 10))
+        self.voice_channel_label.grid(row=i+1, column=0, padx=10, pady=20, sticky="ew")
+        self.disconnect_button = tk.Button(self.left_frame, text="Disconnect", command=self.disconnect_user,
+                                           background='#2937FF',
+                                           foreground='#04FF00', activebackground='#4DC9FF', activeforeground='#04FF00')
+        self.disconnect_button.grid(row=i+2, column=0, padx=10, pady=20, sticky="ew")
+
+    def switch_voice_channel(self, channel_id):
+        # Checks if already connected in this channel, if yes: disconnects
+        if self.current_voice_channel == channel_id:
+            self.current_voice_channel = None
+            self.voice_channel_label.configure(
+                text=f"Opened voice channel: \nNone",
+                font=("Classic Console Neue", 10))
+            self.client.stop_call()
+        # If not:
+        else:
+            self.current_voice_channel = channel_id
+            # Sends own ip to server
+            self.client.send_own_ip(channel_id)
+            self.voice_channel_label.configure(text=f"Opened voice channel: \n"
+                                                    f"{self.dict_voice_channels[self.current_channel][0]}",
+                                               font=("Classic Console Neue", 10))
+            # Gets peer_ip if exists
+            peer_ip = self.client.get_other_ip(channel_id)
+            if peer_ip != '0':
+                self.client.start_call()
+                self.client.get_host_port((self.client.get_own_ip(), 25567), peer_ip)
+            else:
+                self.client.standby_before_call(self)
 
     def switch_text_channel(self, channel_id):
         self.current_channel = channel_id
