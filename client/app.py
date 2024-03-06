@@ -42,6 +42,7 @@ class App(tk.Tk):
         # Calls the main_interface screen
         self.geometry("1400x700")
         self.main_interface.client = self.client
+        self.main_interface.disconnect = False
         self.main_interface.start_messages_coroutine()
         self.main_interface.thread_get_server_infos()
         self.main_interface.create_text_channels_buttons()
