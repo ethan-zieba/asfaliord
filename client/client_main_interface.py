@@ -64,6 +64,10 @@ class MainInterfaceScreen(tk.Frame):
         self.text_channel_label = tk.Label(self.left_frame, text=f"Opened text channel:\n{self.dict_text_channels['1']}",
                                            background="#000F44", foreground="#04FF00", font=("Classic Console Neue", 10))
         self.text_channel_label.grid(row=1, column=0, padx=10, pady=20, sticky="ew")
+        self.disconnect_button = tk.Button(self.left_frame, text="Disconnect", command=self.disconnect_user,
+                                     background='#2937FF',
+                                     foreground='#04FF00', activebackground='#4DC9FF', activeforeground='#04FF00')
+        self.disconnect_button.grid(row=2, column=0, padx=10, pady=20, sticky="ew")
 
     def thread_get_server_infos(self):
         threading.Thread(target=self.get_text_channels).start()
@@ -203,6 +207,9 @@ class MainInterfaceScreen(tk.Frame):
             self.chat_history.tag_configure("date", foreground="#4AE4FF")
             self.chat_history.config(state="disabled")
             self.chat_history.see(tk.END)
+
+    def disconnect_user(self):
+        pass
 
     def get_users(self):
         # Gets a tuple of (username, isConnected)
