@@ -30,7 +30,7 @@ users_query = ("CREATE TABLE users ("
                "id INT NOT NULL AUTO_INCREMENT,"
                "username VARCHAR(25) NOT NULL,"
                "password VARCHAR(255) NOT NULL,"
-               "public_gpg VARCHAR(500),"
+               "public_gpg VARCHAR(50000),"
                "PRIMARY KEY (id)"
                ")")
 
